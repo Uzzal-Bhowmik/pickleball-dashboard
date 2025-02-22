@@ -1,1 +1,1 @@
-# pickleball-dashboard
+# pickleball-app-dashboard

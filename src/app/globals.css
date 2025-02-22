@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-open-sans: "Open Sans", sans-serif;
+
+  /* Custom Colors */
+--primary: rgb(48, 95, 161);
+--primary-lime-green: #B2D235;
+--primary-light-green: #59FF00;
+
+--primary-gradient: linear-gradient(90deg, #2D7EAC -18.92%, #295084 123.12%);
+
+/* -------------------------------------------------------- */
+  --primary-2: #1b5fee;
+  --accent-green: #3bb5a5;
+  --primary-gray: #0000008f;
+  /* --primary-blue: #1b71a7; */
+  --primary-red: #db2424;
+  --primary-green: #65b545;
+  --primary-yellow: #f5bd14;
+
+  --light-gray: #e8e8e8;
+  --demin-primary-50: #e9f2f6;
+  --demin-primary-100: #b8d3e3;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-open-sans);
+  top: 0 !important;
+}
+
+/* Hide Scrollbar */
+.scroll-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.scroll-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.border-red {
+  @apply border border-red-500;
+}
+
+/* --------- Custom Utilities ----------- */
+
+.flex-center-start {
+  @apply flex items-center justify-start;
+}
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-center-between {
+  @apply flex items-center justify-between;
+}
+
+.flex-center-end {
+  @apply flex items-center justify-end;
+}
+
+.flex-start-between {
+  @apply flex items-start justify-between;
+}
+
+.flex-center-start {
+  @apply flex items-center justify-start;
+}
+
+.flex-start-start {
+  @apply flex items-start justify-start;
+}
+
+.flex-stretch-between {
+  @apply flex items-stretch justify-between;
+}
+
+.flex-stretch-start {
+  @apply flex items-stretch justify-start;
+}
+
+/* Ant design override */
+.ant-modal-close-icon * {
+  fill: black !important;
+}
+
+.ant-table-cell {
+  font-weight: 500;
+}
+
+.ant-form-item-label label {
+  font-weight: 500;
+}
+
+.ant-popconfirm-description {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+}
+
+.ant-tabs-tab-btn {
+  font-weight: 500;
+}
+
+.ant-input {
+  font-weight: 450 !important;
+}
+
+.ant-otp input {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+}
+
+.antd-col {
+  box-sizing: border-box;
+}
+
+.ant-tag {
+  font-family: var(--font-open-sans) !important;
+  border-radius: 9999px !important;
+  padding-inline: 12px !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.ant-upload-wrapper {
+  width: 100% !important;
+}
+.ant-upload-select {
+  width: 100% !important;
+}
+
+/* Hide Google Translate Top Bar */
+.skiptranslate {
+  display: none !important;
+}
+
+/* Admin Dashboard Sliders Custom Styles */
+.highlighted-properties .splide__pagination__page.is-active {
+  background-color: var(--primary-2) !important;
+}

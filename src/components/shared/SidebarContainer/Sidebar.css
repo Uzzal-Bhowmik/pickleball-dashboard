@@ -1,0 +1,38 @@
+.sidebar-menu > .ant-menu-item,
+.sidebar-menu .ant-menu-submenu {
+  @apply bg-white font-medium text-lg !rounded-lg !shadow-none !border-none;
+}
+
+.sidebar-menu .ant-menu-item {
+  padding-inline: 12px !important;
+}
+
+.sidebar-menu {
+  border-right: 1px solid lightgray !important;
+  height: calc(100vh - 80px) !important;
+}
+
+.sidebar-menu .ant-menu-submenu {
+  @apply mx-auto w-[97%];
+}
+
+.sidebar-menu .ant-menu-sub li {
+  padding-inline: 10px !important;
+  transition: none !important;
+}
+
+.ant-menu-title-content {
+  transition: none !important;
+}
+
+.ant-menu-submenu-title * {
+  color: black !important;
+}
+
+.ant-menu-submenu-title:hover svg {
+  color: white !important;
+}
+
+.ant-menu-title-content:hover {
+  color: white !important;
+}
