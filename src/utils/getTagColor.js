@@ -13,6 +13,12 @@ const getTagColor = (value) => {
     case "monthly fee":
       color = "geekblue-inverse";
       break;
+    case "paid":
+      color = "green";
+      break;
+    case "refunded":
+      color = "red";
+      break;
   }
 
   return color;

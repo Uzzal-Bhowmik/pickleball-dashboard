@@ -8,50 +8,47 @@ import { Input } from "antd";
 import { Icon } from "@iconify/react";
 import { DatePicker } from "antd";
 const { Search } = Input;
-import userImg from "@/assets/images/user-avatar.png";
-import { Image } from "antd";
 import { formatString } from "@/utils/formatString";
 import { useState } from "react";
 import getTagColor from "@/utils/getTagColor";
+import { useGetAllEarningsQuery } from "@/redux/api/earningsApi";
+import CustomAvatar from "@/components/CustomAvatar";
+import dayjs from "dayjs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useQueryString from "@/hooks/useQueryString";
 
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
+  const router = useRouter();
+  const currentPathname = usePathname();
+  const { createQueryString } = useQueryString();
+  const [searchText, setSearchText] = useState("");
 
-  // Table Data
-  const data = Array.from({ length: 20 }).map((_, inx) => ({
-    id: "INV0938",
-    guest: {
-      name: "Sarah Johnson",
-      img: userImg,
-    },
-    amount: "499",
-    status: "Paid",
-    tnxId: "454842343454",
-    date: "Aug, 15 2023 02:29 PM",
-    subscriptionType: inx % 5 === 0 ? "Annual Fee" : "Monthly Fee",
-  }));
+  // Query params
+  const query = {};
+  if (searchText) {
+    query["id"] = searchText;
+  }
+
+  // Get all earnings
+  const { data: earningsRes, isLoading } = useGetAllEarningsQuery(query);
+  const earningsData = earningsRes?.data || [];
+  const earningsMeta = earningsRes?.meta || {};
 
   // =============== Table columns ===============
   const columns = [
     {
-      title: "Invoice Id",
+      title: "Payment Id",
       dataIndex: "id",
-      render: (value) => `#${value}`,
     },
     {
       title: "Paid By",
-      dataIndex: "guest",
+      dataIndex: "account",
       render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <Image
-              src={value.img.src}
-              alt={value.name}
-              height={30}
-              width={30}
-              className="aspect-square rounded-full object-cover"
-            />
-            <p>{value.name}</p>
+            <CustomAvatar src={value?.photoUrl} name={value?.name} size={30} />
+            <p>{value?.name}</p>
           </Flex>
         );
       },
@@ -70,11 +67,11 @@ export default function EarningsTable() {
       filters: [
         {
           text: "Paid",
-          value: "Paid",
+          value: "paid",
         },
         {
-          text: "Unpaid",
-          value: "Unpaid",
+          text: "Refunded",
+          value: "refunded",
         },
       ],
       filterIcon: () => (
@@ -86,7 +83,7 @@ export default function EarningsTable() {
       ),
       onFilter: (value, record) => record.status.indexOf(value) === 0,
       render: (value) => (
-        <Tag color="green" className="!text-sm">
+        <Tag color={getTagColor(value)} className="!text-sm capitalize">
           {value}
         </Tag>
       ),
@@ -94,7 +91,7 @@ export default function EarningsTable() {
 
     {
       title: "Tnx Id",
-      dataIndex: "tnxId",
+      dataIndex: "transaction_id",
       render: (value) => (
         <Tag
           color="magenta"
@@ -106,36 +103,37 @@ export default function EarningsTable() {
         </Tag>
       ),
     },
-    {
-      title: "Subscription Type",
-      dataIndex: "subscriptionType",
-      render: (value) => {
-        return <Tag color={getTagColor(value)}>{value}</Tag>;
-      },
-    },
+    // {
+    //   title: "Subscription Type",
+    //   dataIndex: "subscriptionType",
+    //   render: (value) => {
+    //     return <Tag color={getTagColor(value)}>{value}</Tag>;
+    //   },
+    // },
     {
       title: "Date",
-      dataIndex: "date",
-    },
-
-    {
-      title: "Action",
-      render: () => {
-        return <Button type="primary">View Details</Button>;
+      dataIndex: "createdAt",
+      render: (value) => {
+        return dayjs(value).format("MMM D YYYY, h:mm A");
       },
     },
+
+    // {
+    //   title: "Action",
+    //   render: () => {
+    //     return <Button type="primary">View Details</Button>;
+    //   },
+    // },
   ];
 
-  
-
   return (
-    <div className="space-y-5 rounded-xl bg-white p-5 pb-0">
+    <div className="min-h-[85vh] space-y-5 rounded-xl bg-white p-5 pb-0">
       <Flex justify="between" align="center">
         <h4 className="flex-1 text-2xl font-semibold">Earnings Overview</h4>
 
         <Search
-          placeholder="Search Earnings..."
-          onSearch={(value) => console.log(value)}
+          placeholder="Search by Payment Id..."
+          onSearch={(value) => setSearchText(value)}
           size="large"
           style={{
             width: 300,
@@ -177,8 +175,6 @@ export default function EarningsTable() {
           </Flex>
         </Col>
 
-     
-
         <Col span={12}>
           <Flex justify="end" gap={14} align="center" className="h-full w-full">
             <DatePicker
@@ -190,18 +186,23 @@ export default function EarningsTable() {
         </Col>
       </Row>
 
-      <div className="">
-        <Table
-          style={{ overflowX: "auto" }}
-          columns={columns}
-          dataSource={data}
-          scroll={{ x: "100%" }}
-          className="notranslate"
-          pagination={{
-            pageSize: 15,
-          }}
-        ></Table>
-      </div>
+      <Table
+        style={{ overflowX: "auto" }}
+        columns={columns}
+        dataSource={earningsData}
+        scroll={{ x: "100%" }}
+        loading={isLoading}
+        pagination={{
+          total: earningsMeta.total,
+          pageSize: 10,
+          current: useSearchParams().get("page") || 1,
+          onChange: (page, pageSize) => {
+            router.push(
+              currentPathname + "?" + createQueryString({ page, pageSize }),
+            );
+          },
+        }}
+      ></Table>
     </div>
   );
 }

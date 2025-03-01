@@ -3,6 +3,7 @@ export const tagTypes = {
   user: "User",
   otp: "Otp",
   notification: "Notification",
+  earnings: "Earnings",
   trainers: "Trainers",
   sessions: "Sessions",
   waitList: "WaitList",
