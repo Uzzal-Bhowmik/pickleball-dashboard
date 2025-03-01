@@ -12,7 +12,7 @@ export const mainTheme = {
       itemHoverBg: "var(--primary)",
       itemHoverColor: "#fff",
       subMenuItemBg: "var(--demin-primary-50)",
-      itemSelectedBg: "var(--primary)",
+      itemSelectedBg: "#305fa1",
       itemSelectedColor: "white",
       iconSize: 17,
       itemMarginBlock: 10,

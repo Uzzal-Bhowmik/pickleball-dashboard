@@ -8,8 +8,10 @@ import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react";
 import { Flex } from "antd";
 import { Divider } from "antd";
+import dayjs from "dayjs";
+import CustomAvatar from "../CustomAvatar";
 
-export default function ProfileModal({ open, setOpen }) {
+export default function ProfileModal({ user, open, setOpen }) {
   return (
     <Modal
       centered
@@ -21,39 +23,38 @@ export default function ProfileModal({ open, setOpen }) {
       }}
     >
       <div className="flex flex-col items-center gap-4 rounded-lg bg-primary py-4">
-        <Image
-          src={userImage}
-          alt="user image"
-          height={2400}
-          width={2400}
-          className="aspect-square h-auto w-[30%] rounded-full object-cover object-center"
-        />
+        <CustomAvatar src={user?.photoUrl} name={user?.name} size={160} />
 
-        <h4 className="text-3xl font-bold text-white">Robo Gladiators</h4>
+        <h4 className="text-3xl font-bold text-white">{user?.name}</h4>
       </div>
 
       <div className="px-12 py-8">
         <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
           <div className="text-black">
+            <h5 className="font-bold">User ID</h5>
+            <p className="text-base">{user?.id}</p>
+          </div>
+          <div className="text-black">
             <h5 className="font-bold">Name</h5>
-            <p className="text-base">Soumaya</p>
+            <p className="text-base">{user?.name}</p>
           </div>
           <div className="text-black">
             <h5 className="font-bold">Email</h5>
-            <p className="text-base">soumaya@gmail.com</p>
+            <p className="text-base">{user?.email}</p>
           </div>
           <div className="text-black">
             <h5 className="font-bold">Contact</h5>
-            <p className="text-base">+234 813 123 4567</p>
+            <p className="text-base">{user?.contactNumber}</p>
           </div>
           <div className="text-black">
             <h5 className="font-bold">Status</h5>
-           <p>Active</p>
+            <Tag color={getTagColor(user?.status)} className="capitalize">
+              {user?.status}
+            </Tag>
           </div>
-
           <div className="text-black">
-            <h5 className="font-bold">Location</h5>
-            <p className="text-base">Ontario, USA</p>
+            <h5 className="font-bold">Joined At</h5>
+            <p>{dayjs(user?.createdAt).format("DD MMM YYYY, hh:mm A")}</p>
           </div>
         </div>
       </div>

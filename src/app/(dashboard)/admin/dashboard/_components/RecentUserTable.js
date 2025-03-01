@@ -2,52 +2,54 @@
 
 import { ConfigProvider } from "antd";
 import { Table } from "antd";
-import { UserX } from "lucide-react";
-import { Eye } from "lucide-react";
-import { Filter } from "lucide-react";
-import Image from "next/image";
-import userImage from "@/assets/images/user-avatar-lg.png";
 import { Tooltip } from "antd";
 import { Tag } from "antd";
 import { useState } from "react";
 import ProfileModal from "@/components/SharedModals/ProfileModal";
 import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react/dist/iconify";
-
-// Dummy Data
-const data = Array.from({ length: 5 }).map((_, inx) => ({
-  key: inx + 1,
-  name: "Robo Gladiators",
-  userImg: userImage,
-  email: "robogladiators@gmail.com",
-  contact: "+1 (234) 567-890",
-  date: "Oct 24 2024, 11:10 PM",
-  status: "Active",
-}));
+import { useGetAllUserQuery, useUpdateUserMutation } from "@/redux/api/userApi";
+import dayjs from "dayjs";
+import catchAsync from "@/utils/catchAsync";
+import toast from "react-hot-toast";
+import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
+import CustomAvatar from "@/components/CustomAvatar";
 
 const RecentUserTable = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState({});
+
+  // Get Recent Users
+  const { data: users, isLoading: isGetAllUsersLoading } = useGetAllUserQuery();
+
+  // Block User
+  const [blockUser] = useUpdateUserMutation();
+
+  const handleBlockUser = async (userId, currentStatus) => {
+    await catchAsync(async () => {
+      const status = currentStatus === "active" ? "blocked" : "active";
+
+      await blockUser({ userId, status }).unwrap();
+      toast.success(
+        currentStatus === "active"
+          ? "User blocked successfully"
+          : "User unblocked successfully",
+      );
+    });
+  };
 
   // =============== Table columns ===============
   const columns = [
     {
-      title: "Serial",
-      dataIndex: "key",
-      render: (value) => `#${value}`,
+      title: "User ID",
+      dataIndex: "id",
     },
     {
       title: "Name",
-      dataIndex: "name",
-      render: (value, record) => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-2">
-          <Image
-            src={record.userImg}
-            alt="User avatar"
-            width={40}
-            height={40}
-            className="rounded-full aspect-square object-cover object-center"
-          />
-          <p className="font-medium">{value}</p>
+          <CustomAvatar src={record?.photoUrl} size={40} name={record?.name} />
+          <p className="font-medium">{record?.name}</p>
         </div>
       ),
     },
@@ -57,33 +59,75 @@ const RecentUserTable = () => {
     },
     {
       title: "Contact",
-      dataIndex: "contact",
+      dataIndex: "contactNumber",
     },
     {
-      title: "Date",
-      dataIndex: "date",
+      title: "Registered At",
+      dataIndex: "createdAt",
+      render: (value) => {
+        return dayjs(value).format("DD MMM YYYY, hh:mm A");
+      },
     },
     {
       title: "Status",
       dataIndex: "status",
 
-      render: (value) => <Tag color={getTagColor(value)}>{value}</Tag>,
+      render: (value) => (
+        <Tag color={getTagColor(value)} className="capitalize">
+          {value}
+        </Tag>
+      ),
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-3">
           <Tooltip title="Show Details">
-            <button onClick={() => setShowProfileModal(true)}>
-              <Icon icon="fa6-regular:eye" color="#1B70A6" height={22} width={22} />
+            <button
+              onClick={() => {
+                setSelectedUser(record);
+                setShowProfileModal(true);
+              }}
+            >
+              <Icon
+                icon="fa6-regular:eye"
+                color="#1B70A6"
+                height={22}
+                width={22}
+              />
+
+              <div className="sr-only">Show Details</div>
             </button>
           </Tooltip>
 
-          <Tooltip title="Block User">
-            <button>
-              <Icon icon="solar:user-block-rounded-linear" color="var(--primary-red)" height={22} width={22} />
-            </button>
-          </Tooltip>
+          <CustomConfirm
+            title="Are you sure?"
+            description="This user's status will be updated."
+            onConfirm={() => handleBlockUser(record?._id, record?.status)}
+          >
+            <Tooltip
+              title={
+                record?.status === "active" ? "Block User" : "Unblock User"
+              }
+            >
+              <Icon
+                icon={
+                  record?.status === "active"
+                    ? "solar:user-block-rounded-linear"
+                    : "solar:user-check-broken"
+                }
+                color={
+                  record?.status === "active"
+                    ? "var(--primary-red)"
+                    : "var(--primary-green)"
+                }
+                height={22}
+                width={22}
+                role="button"
+              />
+              <div className="sr-only">Block User</div>
+            </Tooltip>
+          </CustomConfirm>
         </div>
       ),
     },
@@ -102,15 +146,21 @@ const RecentUserTable = () => {
 
       <div className="my-5">
         <Table
+          loading={isGetAllUsersLoading}
           style={{ overflowX: "auto" }}
           columns={columns}
-          dataSource={data}
+          dataSource={isGetAllUsersLoading ? [] : users?.slice(0, 5)}
           scroll={{ x: "100%" }}
+          pagination={false}
         ></Table>
       </div>
 
       {/* Profile Modal */}
-      <ProfileModal open={showProfileModal} setOpen={setShowProfileModal} />
+      <ProfileModal
+        open={showProfileModal}
+        setOpen={setShowProfileModal}
+        user={selectedUser}
+      />
     </ConfigProvider>
   );
 };

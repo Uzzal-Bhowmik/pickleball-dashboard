@@ -1,11 +1,15 @@
-import { Avatar } from "antd";
+import { Image } from "antd";
 
 export default function CustomAvatar({ src, name, size = 24, ...props }) {
-  return src ? (
-    <Avatar src={src} size={size} {...props} />
-  ) : (
-    <Avatar size={size} {...props}>
-      {name}
-    </Avatar>
+  return (
+    <Image
+      src={src}
+      alt={name || "Avatar"}
+      height={size}
+      width={size}
+      {...props}
+      className="rounded-full object-cover object-center ring-2 ring-primary/75"
+      fallback={"/placeholder-image.jpg"}
+    />
   );
 }

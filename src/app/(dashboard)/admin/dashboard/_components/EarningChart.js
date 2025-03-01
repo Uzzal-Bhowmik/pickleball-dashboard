@@ -15,61 +15,18 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const data = [
-  { month: "Jan", earning: 1200 },
-  { month: "Feb", earning: 1402 },
-  { month: "Mar", earning: 1525 },
-  { month: "Apr", earning: 1222 },
-  { month: "May", earning: 1553 },
-  { month: "Jun", earning: 1634 },
-  { month: "Jul", earning: 1923 },
-  { month: "Aug", earning: 1324 },
-  { month: "Sep", earning: 1834 },
-  { month: "Oct", earning: 1256 },
-  { month: "Nov", earning: 1634 },
-  { month: "Dec", earning: 2105 },
-];
-
-const EarningChart = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-
-  const handleChange = (value) => {
-    setSelectedYear(value);
-  };
-
+const EarningChart = ({ data, setSelectedEarningYear }) => {
   return (
-    <div className="rounded-xl p-6 w-full xl:w-1/2 bg-white">
-      <div className="flex justify-between items-center mb-10">
+    <div className="w-full rounded-xl bg-white p-6 xl:w-1/2">
+      <div className="mb-10 flex items-center justify-between">
         <h1 className="text-xl font-semibold">Earnings Overview</h1>
 
-        <div className="flex-center-start gap-x-4">
-          <Flex
-            align="center"
-            justify="start"
-            className="border border-gray-400 rounded-lg py-1.5 px-3"
-          >
-            <h1 className="font-medium">Monthly Growth:</h1>
-
-            <Flex
-              align="center"
-              justify="start"
-              gap={2}
-              className="ml-2 font-bold text-green-500"
-            >
-              <Icon icon="iconamoon:trend-up-light" height={16} width={16} />{" "}
-              35.80%
-            </Flex>
-          </Flex>
-
-          <DatePicker
-            // onChange={(_, dateString) =>
-            //   setJoinYear(moment(dateString).format("YYYY"))
-            // }
-            picker="year"
-            defaultValue={dayjs()}
-            className="!text-white !border-none !py-1.5"
-          />
-        </div>
+        <DatePicker
+          onChange={(_, dateString) => setSelectedEarningYear(dateString)}
+          picker="year"
+          defaultValue={dayjs()}
+          className="!border-none !py-1.5 !text-white"
+        />
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
@@ -93,6 +50,9 @@ const EarningChart = () => {
             axisLine={false}
             tickLine={false}
             dataKey="month"
+            angle={-45}
+            textAnchor="start"
+            interval={0}
           />
 
           <YAxis tickMargin={20} axisLine={false} tickLine={false} />
@@ -117,7 +77,7 @@ const EarningChart = () => {
           <Area
             activeDot={{ fill: "var(--primary)" }}
             type="monotone"
-            dataKey="earning"
+            dataKey="amount"
             strokeWidth={0}
             stroke="var(--primary)"
             fill="url(#color)"

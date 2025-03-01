@@ -1,62 +1,60 @@
 "use client";
 
-import { Input, Table } from "antd";
-import { Tooltip } from "antd";
 import { ConfigProvider } from "antd";
-import { Search } from "lucide-react";
-import userImage from "@/assets/images/user-avatar-lg.png";
-import { Eye } from "lucide-react";
-import { UserX } from "lucide-react";
-import { useState } from "react";
-import { Filter } from "lucide-react";
-import Image from "next/image";
-import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
-import { message } from "antd";
-import ProfileModal from "@/components/SharedModals/ProfileModal";
+import { Table } from "antd";
+import { Tooltip } from "antd";
 import { Tag } from "antd";
+import { useState } from "react";
+import ProfileModal from "@/components/SharedModals/ProfileModal";
 import getTagColor from "@/utils/getTagColor";
-import { Icon } from "@iconify/react";
+import { Icon } from "@iconify/react/dist/iconify";
+import { useGetAllUserQuery, useUpdateUserMutation } from "@/redux/api/userApi";
+import dayjs from "dayjs";
+import catchAsync from "@/utils/catchAsync";
+import toast from "react-hot-toast";
+import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
+import CustomAvatar from "@/components/CustomAvatar";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useQueryString from "@/hooks/useQueryString";
 
-// Dummy table Data
-const data = Array.from({ length: 10 }).map((_, inx) => ({
-  key: inx + 1,
-  name: "Robo Gladiators",
-  userImg: userImage,
-  email: "robogladiators@gmail.com",
-  contact: "+1 (234) 567-890",
-  date: "Oct 24 2024, 11:10 PM",
-  status: "Active",
-}));
+const AccDetailsTable = () => {
+  const router = useRouter();
+  const currentPathname = usePathname();
+  const { createQueryString } = useQueryString();
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState({});
 
-export default function AccDetailsTable() {
-  const [searchText, setSearchText] = useState("");
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  // Get Recent Users
+  const { data: users, isLoading: isGetAllUsersLoading } = useGetAllUserQuery();
 
-  // Block user handler
-  const handleBlockUser = () => {
-    message.success("User blocked successfully");
+  // Block User
+  const [blockUser] = useUpdateUserMutation();
+
+  const handleBlockUser = async (userId, currentStatus) => {
+    await catchAsync(async () => {
+      const status = currentStatus === "active" ? "blocked" : "active";
+
+      await blockUser({ userId, status }).unwrap();
+      toast.success(
+        currentStatus === "active"
+          ? "User blocked successfully"
+          : "User unblocked successfully",
+      );
+    });
   };
 
-  // ================== Table Columns ================
+  // =============== Table columns ===============
   const columns = [
     {
-      title: "Serial",
-      dataIndex: "key",
-      render: (value) => `#${value}`,
+      title: "User ID",
+      dataIndex: "id",
     },
     {
       title: "Name",
-      dataIndex: "name",
-      render: (value, record) => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-2">
-          <Image
-            src={record.userImg}
-            alt="User avatar"
-            width={40}
-            height={40}
-            className="aspect-square rounded-full object-cover object-center"
-          />
-          <p className="font-medium">{value}</p>
+          <CustomAvatar src={record?.photoUrl} size={40} name={record?.name} />
+          <p className="font-medium">{record?.name}</p>
         </div>
       ),
     },
@@ -66,33 +64,75 @@ export default function AccDetailsTable() {
     },
     {
       title: "Contact",
-      dataIndex: "contact",
+      dataIndex: "contactNumber",
     },
     {
-      title: "Date",
-      dataIndex: "date",
+      title: "Registered At",
+      dataIndex: "createdAt",
+      render: (value) => {
+        return dayjs(value).format("DD MMM YYYY, hh:mm A");
+      },
     },
     {
       title: "Status",
       dataIndex: "status",
 
-      render: (value, record) => <Tag color={getTagColor(value)}>{value}</Tag>,
+      render: (value) => (
+        <Tag color={getTagColor(value)} className="capitalize">
+          {value}
+        </Tag>
+      ),
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-3">
           <Tooltip title="Show Details">
-            <button onClick={() => setProfileModalOpen(true)}>
-              <Eye color="#1B70A6" size={22} />
+            <button
+              onClick={() => {
+                setSelectedUser(record);
+                setShowProfileModal(true);
+              }}
+            >
+              <Icon
+                icon="fa6-regular:eye"
+                color="#1B70A6"
+                height={22}
+                width={22}
+              />
+
+              <div className="sr-only">Show Details</div>
             </button>
           </Tooltip>
 
-          <Tooltip title="Block User">
-            <button>
-              <UserX color="#F16365" size={22} />
-            </button>
-          </Tooltip>
+          <CustomConfirm
+            title="Are you sure?"
+            description="This user's status will be updated."
+            onConfirm={() => handleBlockUser(record?._id, record?.status)}
+          >
+            <Tooltip
+              title={
+                record?.status === "active" ? "Block User" : "Unblock User"
+              }
+            >
+              <Icon
+                icon={
+                  record?.status === "active"
+                    ? "solar:user-block-rounded-linear"
+                    : "solar:user-check-broken"
+                }
+                color={
+                  record?.status === "active"
+                    ? "var(--primary-red)"
+                    : "var(--primary-green)"
+                }
+                height={22}
+                width={22}
+                role="button"
+              />
+              <div className="sr-only">Block User</div>
+            </Tooltip>
+          </CustomConfirm>
         </div>
       ),
     },
@@ -107,23 +147,41 @@ export default function AccDetailsTable() {
         },
       }}
     >
-      <div className="mb-3 ml-auto w-1/3 gap-x-5">
-        <Input
-          placeholder="Search by name or email"
-          prefix={<Search className="mr-2 text-black" size={20} />}
-          className="h-11 !rounded-lg !border !text-base"
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+      <h4 className="text-2xl font-semibold">Recent Registration</h4>
+
+      <div className="my-5">
+        <Table
+          loading={isGetAllUsersLoading}
+          style={{ overflowX: "auto" }}
+          columns={columns}
+          dataSource={users}
+          scroll={{ x: "100%" }}
+          pagination={{
+            pageSize: 10,
+            current: useSearchParams().get("page") || 1,
+            onChange: (page, pageSize) => {
+              router.push(
+                currentPathname +
+                  "?" +
+                  createQueryString({
+                    page,
+                    pageSize,
+                  }),
+              );
+            },
+          }}
+          rowKey={(record) => record?._id}
+        ></Table>
       </div>
 
-      <Table
-        style={{ overflowX: "auto" }}
-        columns={columns}
-        dataSource={data}
-        scroll={{ x: "100%" }}
-      ></Table>
-
-      <ProfileModal open={profileModalOpen} setOpen={setProfileModalOpen} />
+      {/* Profile Modal */}
+      <ProfileModal
+        open={showProfileModal}
+        setOpen={setShowProfileModal}
+        user={selectedUser}
+      />
     </ConfigProvider>
   );
-}
+};
+
+export default AccDetailsTable;

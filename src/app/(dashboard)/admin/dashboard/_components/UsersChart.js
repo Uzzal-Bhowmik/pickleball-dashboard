@@ -1,8 +1,6 @@
 "use client";
 
-import { Select } from "antd";
 import {
-  BarChart,
   Bar,
   XAxis,
   YAxis,
@@ -12,58 +10,28 @@ import {
   ComposedChart,
   Line,
 } from "recharts";
-import { useState } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 
-const data = [
-  { month: "Jan", user: 120 },
-  { month: "Feb", user: 140 },
-  { month: "Mar", user: 152 },
-  { month: "Apr", user: 122 },
-  { month: "May", user: 153 },
-  { month: "Jun", user: 164 },
-  { month: "Jul", user: 193 },
-  { month: "Aug", user: 134 },
-  { month: "Sep", user: 184 },
-  { month: "Oct", user: 126 },
-  { month: "Nov", user: 164 },
-  { month: "Dec", user: 215 },
-];
-
-const UsersChart = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [selectedUserType, setSelectedUserType] = useState("user");
-
-  const handleChange = (value) => {
-    setSelectedYear(value);
-  };
-  const handleUserChange = (value) => {
-    setSelectedUserType(value);
-  };
-
+const UsersChart = ({ data, setSelectedUserYear }) => {
   return (
-    <div className="rounded-xl p-6 w-full xl:w-1/2 bg-white">
-      <div className="flex lg:flex-wrap xl:flex-nowrap justify-between items-center mb-10 gap-2">
+    <div className="w-full rounded-xl bg-white p-6 xl:w-1/2">
+      <div className="mb-10 flex items-center justify-between gap-2 lg:flex-wrap xl:flex-nowrap">
         <h1 className="text-xl font-bold">Users Overview</h1>
 
         <div className="space-x-3">
           <DatePicker
-            // onChange={(_, dateString) =>s
-            //   setJoinYear(moment(dateString).format("YYYY"))
-            // }
+            onChange={(_, dateString) => {
+              setSelectedUserYear(dateString);
+            }}
             picker="year"
             defaultValue={dayjs()}
-            className="!text-white !border-none !py-1.5"
+            className="!border-none !py-1.5 !text-white"
           />
         </div>
       </div>
 
-         <ResponsiveContainer
-        width="100%"
-        height={300}
-        className="px-4 border border-transparent"
-      >
+      <ResponsiveContainer width="100%" height={300}>
         <ComposedChart
           data={data}
           margin={{
@@ -81,6 +49,9 @@ const UsersChart = () => {
             tickMargin={10}
             tickLine={false}
             axisLine={false}
+            angle={-45}
+            textAnchor="start"
+            interval={0}
           />
           <YAxis axisLine={false} tickLine={false} tickMargin={20} />
 
@@ -97,11 +68,11 @@ const UsersChart = () => {
               });
 
               return (
-                <div className="bg-white p-2 shadow-md rounded-md">
+                <div className="rounded-md bg-white p-2 shadow-md">
                   <p className="font-semibold">{label}</p>
                   {uniqueValues.map((entry, index) => (
                     <p key={index} style={{ color: entry.color }}>
-                      Monthly Earnings: {entry.value}
+                      Monthly Joined Users: {entry.value}
                     </p>
                   ))}
                 </div>
@@ -120,11 +91,11 @@ const UsersChart = () => {
           <Bar
             barSize={20}
             background={false}
-            dataKey="user"
+            dataKey="count"
             fill="var(--primary)"
           />
 
-          <Line type="monotone" dataKey="user" stroke="#305fa166" />
+          <Line type="monotone" dataKey="count" stroke="#305fa166" />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

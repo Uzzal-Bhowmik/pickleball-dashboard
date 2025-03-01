@@ -23,8 +23,7 @@ export const metadata = {
     default: "Harrow Pickleball Club Dashboard",
     template: "%s - Harrow Pickleball Club",
   },
-  description:
-    "Admin Dashboard for Harrow Pickleball Club"
+  description: "Admin Dashboard for Harrow Pickleball Club",
 };
 
 export default function RootLayout({ children }) {
@@ -49,13 +48,6 @@ export default function RootLayout({ children }) {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-
-        <Script src="/scripts/lang-config.js" strategy="beforeInteractive" />
-        <Script src="/scripts/translation.js" strategy="beforeInteractive" />
-        <Script
-          src="//translate.google.com/translate_a/element.js?cb=TranslateInit"
-          strategy="afterInteractive"
-        />
       </head>
 
       <body

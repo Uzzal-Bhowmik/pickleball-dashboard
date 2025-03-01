@@ -1,6 +1,6 @@
 .sidebar-menu > .ant-menu-item,
 .sidebar-menu .ant-menu-submenu {
-  @apply bg-white font-medium text-lg !rounded-lg !shadow-none !border-none;
+  @apply !rounded-lg !border-none text-lg font-medium !shadow-none;
 }
 
 .sidebar-menu .ant-menu-item {

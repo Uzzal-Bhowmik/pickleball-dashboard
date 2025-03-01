@@ -9,14 +9,35 @@ import { Button } from "antd";
 import { useRouter } from "next/navigation";
 import logo from "@/assets/logos/logo.svg";
 import Image from "next/image";
+import { useSignInMutation } from "@/redux/api/authApi";
+import catchAsync from "@/utils/catchAsync";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { setUser } from "@/redux/features/authSlice";
 
 export default function LoginForm() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [signIn, { isLoading }] = useSignInMutation();
 
-  const onLoginSubmit = (data) => {
-    console.log(data);
+  const onLoginSubmit = async (data) => {
+    await catchAsync(async () => {
+      const res = await signIn(data).unwrap();
+      toast.success("Successfully Logged In!");
 
-    router.push("/admin/dashboard");
+      // set user
+      dispatch(
+        setUser({
+          user: jwtDecode(res?.data?.accessToken),
+          token: res?.data?.accessToken,
+        }),
+      );
+
+      // send user back or home
+      router.push("/");
+      router.refresh();
+    });
   };
 
   return (
@@ -35,7 +56,14 @@ export default function LoginForm() {
         <p className="text-dark-gray">Sign in to your account</p>
       </section>
 
-      <FormWrapper onSubmit={onLoginSubmit} resolver={zodResolver(loginSchema)}>
+      <FormWrapper
+        onSubmit={onLoginSubmit}
+        resolver={zodResolver(loginSchema)}
+        defaultValues={{
+          email: "pikleballadmin@gmail.com",
+          password: "admin123",
+        }}
+      >
         <UInput
           name="email"
           type="email"
@@ -59,6 +87,7 @@ export default function LoginForm() {
           type="primary"
           size="large"
           className="!h-10 w-full !font-semibold"
+          loading={isLoading}
         >
           Log In
         </Button>
