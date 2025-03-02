@@ -10,6 +10,13 @@ import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import AddTrainerModal from "./AddTrainerModal";
 import EditTrainerModal from "./EditTrainerModal";
 import ViewTrainerModal from "./ViewTrainerModal";
+import {
+  useDeleteTrainerMutation,
+  useGetAllTrainersQuery,
+} from "@/redux/api/trainerApi";
+import CustomAvatar from "@/components/CustomAvatar";
+import { Tag } from "antd";
+import catchAsync from "@/utils/catchAsync";
 
 const { Search } = Input;
 
@@ -17,42 +24,44 @@ export default function TrainerManagementTable() {
   const [showViewTrainerModal, setShowViewTrainerModal] = useState(false);
   const [showAddTrainerModal, setShowAddTrainerModal] = useState(false);
   const [showEditTrainerModal, setShowEditTrainerModal] = useState(false);
+  const [selectedTrainer, setSelectedTrainer] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Table Data
-  const data = Array.from({ length: 20 }).map((_, inx) => ({
-    id: "SID0938",
-    title: "Doubles Strategy Masterclass",
-    location: "Ontario USA",
-    perHourRate: 50,
-    rating: 4.8,
-    availability: "Mon - Sat",
-    name: "John Smith",
-    image: trainerImage,
-    email: "john.smith@gmail.com",
-    status: "Active",
-  }));
+  // Query params
+  const query = {};
+  if (searchTerm) {
+    query["searchTerm"] = searchTerm;
+  }
+
+  // Get all trainers
+  const { data: trainersRes, isFetching } = useGetAllTrainersQuery(query);
+  const trainers = trainersRes?.data || [];
+  const trainersMeta = trainersRes?.meta || {};
+
+  // Delete Session
+  const [deleteTrainer] = useDeleteTrainerMutation();
+  const handleDeleteTrainer = async (trainerId) => {
+    await catchAsync(async () => {
+      await deleteTrainer(trainerId).unwrap();
+      toast.success("Trainer Deleted Successfully");
+    });
+  };
 
   // =============== Table columns ===============
   const columns = [
     {
       title: "Trainer Id",
       dataIndex: "id",
-      render: (value) => `#${value}`,
     },
 
     {
       title: "Name",
-      render: (_, record) => {
+      dataIndex: "user",
+      render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <Image
-              src={record.image.src}
-              alt={record.name}
-              height={30}
-              width={30}
-              className="aspect-square rounded-full object-cover"
-            />
-            <p>{record.name}</p>
+            <CustomAvatar name={value?.name} src={value?.photoUrl} size={30} />
+            <p>{value?.name}</p>
           </Flex>
         );
       },
@@ -60,16 +69,17 @@ export default function TrainerManagementTable() {
 
     {
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "user",
+      render: (value) => value?.email,
     },
     {
       title: "Per Hour Rate",
-      dataIndex: "perHourRate",
+      dataIndex: "per_hour_rate",
       render: (value) => `$${value}`,
     },
     {
       title: "Avg. Rating",
-      dataIndex: "rating",
+      dataIndex: "avgRating",
       render: (value) => (
         <Flex align="center" justify="start" gap={3}>
           {value.toFixed(1)}
@@ -80,10 +90,21 @@ export default function TrainerManagementTable() {
     {
       title: "Availability",
       dataIndex: "availability",
+      render: (value) => {
+        return (
+          <Flex align="center" justify="start" wrap>
+            {value?.map((item) => (
+              <Tag key={item} color="green" className="capitalize">
+                {item}
+              </Tag>
+            ))}
+          </Flex>
+        );
+      },
     },
     {
       title: "Action",
-      render: () => {
+      render: (_, record) => {
         return (
           <Flex align="center" justify="start" gap={5}>
             <Tooltip title="Show Details">
@@ -98,7 +119,10 @@ export default function TrainerManagementTable() {
                   />
                 }
                 style={{ boxShadow: "none" }}
-                onClick={() => setShowViewTrainerModal(true)}
+                onClick={() => {
+                  setShowViewTrainerModal(true);
+                  setSelectedTrainer(record);
+                }}
               />
             </Tooltip>
 
@@ -122,6 +146,7 @@ export default function TrainerManagementTable() {
             <CustomConfirm
               title="Are you sure?"
               description="This trainer will be permanently deleted."
+              onConfirm={() => handleDeleteTrainer(record?._id)}
             >
               <Tooltip title="Cancel Trainer">
                 <Button
@@ -150,8 +175,8 @@ export default function TrainerManagementTable() {
         <h4 className="flex-1 text-2xl font-semibold">Trainer Management</h4>
 
         <Search
-          placeholder="Search Trainers..."
-          onSearch={(value) => console.log(value)}
+          placeholder="Search trainer by name, id..."
+          onSearch={(value) => setSearchTerm(value)}
           size="large"
           style={{
             width: 300,
@@ -165,7 +190,7 @@ export default function TrainerManagementTable() {
           shape="round"
           style={{ boxShadow: "none" }}
           size="large"
-          onClick={() => setShowViewTrainerModal(true)}
+          onClick={() => setShowAddTrainerModal(true)}
         >
           Add Trainer
         </Button>
@@ -174,7 +199,8 @@ export default function TrainerManagementTable() {
       <Table
         style={{ overflowX: "auto" }}
         columns={columns}
-        dataSource={data}
+        dataSource={trainers}
+        loading={isFetching}
         scroll={{ x: "100%" }}
         className="notranslate"
         pagination={{
@@ -186,6 +212,7 @@ export default function TrainerManagementTable() {
       <ViewTrainerModal
         open={showViewTrainerModal}
         setOpen={setShowViewTrainerModal}
+        selectedTrainer={selectedTrainer}
       />
 
       <AddTrainerModal

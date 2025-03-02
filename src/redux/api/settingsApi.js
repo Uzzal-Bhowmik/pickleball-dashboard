@@ -1,27 +1,30 @@
 import { tagTypes } from "../tagtypes";
 import { baseApi } from "./baseApi";
 
+const URL_PREFIX = "/settings";
+
 const contentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getContents: builder.query({
+    getSettingsData: builder.query({
       query: (query) => ({
-        url: "/contents",
+        url: URL_PREFIX,
         method: "GET",
         params: query,
       }),
 
-      providesTags: [tagTypes.content],
+      providesTags: [tagTypes.settings],
     }),
 
-    updateContent: builder.mutation({
+    updateSettingsData: builder.mutation({
       query: (data) => ({
-        url: `/contents`,
+        url: URL_PREFIX,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: [tagTypes.content],
+      invalidatesTags: [tagTypes.settings],
     }),
   }),
 });
 
-export const { useGetContentsQuery, useUpdateContentMutation } = contentApi;
+export const { useGetSettingsDataQuery, useUpdateSettingsDataMutation } =
+  contentApi;

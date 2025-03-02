@@ -28,7 +28,7 @@ export default function FormWrapper({
 
   const handleSubmit = (data) => {
     onSubmit(data);
-    methods.reset();
+    process.env.NEXT_PUBLIC_NODE_ENV !== "development" && methods.reset();
   };
 
   return (

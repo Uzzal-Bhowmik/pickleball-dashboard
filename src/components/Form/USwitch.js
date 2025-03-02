@@ -1,10 +1,10 @@
-import { Switch } from 'antd'
-import { Form } from 'antd'
-import { Controller } from 'react-hook-form'
+import { Switch } from "antd";
+import { Form } from "antd";
+import { Controller } from "react-hook-form";
 
-export default function USwitch({name, label}) {
+export default function USwitch({ name, label }) {
   return (
-     <Controller
+    <Controller
       name={name}
       render={({ field, fieldState: { error } }) => (
         <Form.Item
@@ -16,5 +16,5 @@ export default function USwitch({name, label}) {
         </Form.Item>
       )}
     />
-  )
+  );
 }

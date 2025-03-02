@@ -2,20 +2,45 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
+import { useResetPasswordMutation } from "@/redux/api/authApi";
 import { resetPassSchema } from "@/schema/authSchema";
+import catchAsync from "@/utils/catchAsync";
+import {
+  getFromSessionStorage,
+  removeFromSessionStorage,
+} from "@/utils/sessionStorage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
+import { jwtDecode } from "jwt-decode";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function SetPasswordForm() {
+  const [updatePassword, { isLoading }] = useResetPasswordMutation();
+  const router = useRouter();
+
   const onSubmit = (data) => {
-    console.log(data);
+    catchAsync(async () => {
+      await updatePassword({
+        ...data,
+        email: jwtDecode(getFromSessionStorage("changePassToken"))?.email,
+      }).unwrap();
+
+      toast.success("Password Updated Successfully");
+
+      // Remove forget password token
+      removeFromSessionStorage("changePassToken");
+
+      // Send to login page
+      router.push("/login");
+    });
   };
 
   return (
-    <div className="px-6 py-8">
+    <div className="w-full py-8">
       <Link
         href="/login"
         className="text-primary-blue flex-center-start hover:text-primary-blue/85 mb-4 gap-x-2 font-medium"
@@ -28,7 +53,7 @@ export default function SetPasswordForm() {
         <p className="text-dark-gray">Enter your new password login</p>
       </section>
 
-      <FormWrapper onSubmit={onSubmit} resolver={zodResolver(resetPassSchema)}>
+      <FormWrapper onSubmit={onSubmit}>
         <UInput
           name="newPassword"
           label="New Password"
@@ -48,9 +73,11 @@ export default function SetPasswordForm() {
         />
 
         <Button
+          htmlType="submit"
           type="primary"
           size="large"
           className="!h-10 w-full !font-semibold"
+          loading={isLoading}
         >
           Submit
         </Button>

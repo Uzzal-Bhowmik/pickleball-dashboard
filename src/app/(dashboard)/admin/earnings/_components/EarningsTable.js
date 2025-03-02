@@ -73,6 +73,10 @@ export default function EarningsTable() {
           text: "Refunded",
           value: "refunded",
         },
+        {
+          text: "Unpaid",
+          value: "unpaid",
+        },
       ],
       filterIcon: () => (
         <Filter
@@ -154,7 +158,9 @@ export default function EarningsTable() {
 
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Today&apos;s Earnings</h4>
-              <h4 className="text-lg font-bold">$ 1,000</h4>
+              <h4 className="text-lg font-bold">
+                $ {earningsData?.todaysEarning}
+              </h4>
             </Flex>
           </Flex>
         </Col>
@@ -170,7 +176,9 @@ export default function EarningsTable() {
 
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Total Earnings</h4>
-              <h4 className="text-lg font-bold">$ 10,000</h4>
+              <h4 className="text-lg font-bold">
+                $ {earningsData?.totalEarning}
+              </h4>
             </Flex>
           </Flex>
         </Col>
@@ -189,7 +197,7 @@ export default function EarningsTable() {
       <Table
         style={{ overflowX: "auto" }}
         columns={columns}
-        dataSource={earningsData}
+        dataSource={earningsData?.earnings}
         scroll={{ x: "100%" }}
         loading={isLoading}
         pagination={{

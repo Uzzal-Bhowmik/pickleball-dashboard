@@ -3,6 +3,7 @@
 import "./Sidebar.css";
 import logo from "@/assets/logos/logo.svg";
 import { MainLayoutContext } from "@/context/MainLayoutContext";
+import { logout } from "@/redux/features/authSlice";
 import { cn } from "@/utils/cn";
 import { Icon } from "@iconify/react";
 import { Menu } from "antd";
@@ -11,6 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 // Sidebar Links
 const adminLinks = [
@@ -33,23 +36,23 @@ const adminLinks = [
     label: "Earnings",
   },
   {
-    id: "session-management",
-    icon: "heroicons-solid:status-online",
-    route: "/admin/session-management",
-    label: "Session Management",
-  },
-  {
     id: "trainer-management",
     icon: "hugeicons:teacher",
     route: "/admin/trainer-management",
     label: "Trainer Management",
   },
   {
-    id: "subscriptions",
-    icon: "lineicons:crown-3",
-    route: "/admin/subscriptions",
-    label: "Subscriptions",
+    id: "session-management",
+    icon: "heroicons-solid:status-online",
+    route: "/admin/session-management",
+    label: "Session Management",
   },
+  // {
+  //   id: "subscriptions",
+  //   icon: "lineicons:crown-3",
+  //   route: "/admin/subscriptions",
+  //   label: "Subscriptions",
+  // },
   {
     id: "settings",
     icon: "si:settings-fill",
@@ -60,20 +63,20 @@ const adminLinks = [
 
 const SidebarContainer = () => {
   const { sidebarCollapsed: collapsed } = useContext(MainLayoutContext);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
   const path = usePathname();
   const userRole = path.split("/")[1] || ""; // hotel | apartment | admin
 
   // Logout handler
   const onClick = (e) => {
-    // if (e.key === "logout") {
-    //   dispatch(logout());
-    //   router.refresh();
-    //   router.push("/login");
+    if (e.key === "logout") {
+      dispatch(logout());
+      router.refresh();
+      router.push("/login");
 
-    //   Success_model({ title: "Logout successful" });
-    // }
+      toast.success("Successfully Logged Out!");
+    }
 
     console.log("logout success");
   };

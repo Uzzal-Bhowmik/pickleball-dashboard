@@ -3,94 +3,171 @@
 import { Button, Flex, Input, Image, Tooltip } from "antd";
 import { Table } from "antd";
 import { PlusCircle } from "lucide-react";
-import trainerImage from "@/assets/images/session/user.png";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import AddSessionModal from "./AddSessionModal";
 import EditSessionModal from "./EditSessionModal";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
+import {
+  useChangeSessionStatusMutation,
+  useDeleteSessionMutation,
+  useGetAllSessionsQuery,
+} from "@/redux/api/sessionApi";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import CustomAvatar from "@/components/CustomAvatar";
+import { Tag } from "antd";
+import getTagColor from "@/utils/getTagColor";
+import ViewSessionModal from "./ViewSessionModal";
+import catchAsync from "@/utils/catchAsync";
+import toast from "react-hot-toast";
+import SessionThumbnailModal from "./SessionThumbnailModal";
+import useQueryString from "@/hooks/useQueryString";
 
 const { Search } = Input;
 
 export default function SessionManagementTable() {
+  const [showViewSessionModal, setShowViewSessionModal] = useState(false);
   const [showAddSessionModal, setShowAddSessionModal] = useState(false);
   const [showEditSessionModal, setShowEditSessionModal] = useState(false);
+  const [showThumbnailModal, setShowThumbnailModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const currentPathname = usePathname();
+  const router = useRouter();
+  const { createQueryString } = useQueryString();
 
-  // Table Data
-  const data = Array.from({ length: 20 }).map((_, inx) => ({
-    id: "SID0938",
-    title: "Doubles Strategy Masterclass",
-    location: "Dhaka, Bangladesh",
-    date: "Aug, 15 2023",
-    startTime: "4:00 PM",
-    endTime: "5:00 PM",
-    trainer: {
-      name: "John Smith",
-      image: trainerImage,
-    },
-    thumbnail: <Icon icon="lucide:file-video" height={24} width={24} />,
-    status: "Active",
-  }));
+  // Query params
+  const query = {};
+  if (searchTerm) {
+    query["searchTerm"] = searchTerm;
+  }
+
+  // Get all sessions
+  const { data: sessionsRes, isFetching: isLoading } =
+    useGetAllSessionsQuery(query);
+  const sessions = sessionsRes?.data || [];
+  const sessionsMeta = sessionsRes?.meta || {};
+
+  // Change session status
+  const [changeSessionStatus, { isLoading: isChangeSessionStatusLoading }] =
+    useChangeSessionStatusMutation();
+  const handleChangeSessionStatus = async (session) => {
+    await catchAsync(async () => {
+      await changeSessionStatus({
+        id: session?._id,
+        data: {
+          status: session?.status === "active" ? "deactive" : "active",
+        },
+      }).unwrap();
+
+      toast.success("Status Changed");
+    });
+  };
+
+  // Delete Session
+  const [deleteSession] = useDeleteSessionMutation();
+  const handleDeleteSession = async (sessionId) => {
+    await catchAsync(async () => {
+      await deleteSession(sessionId).unwrap();
+      toast.success("Session Deleted Successfully");
+    });
+  };
 
   // =============== Table columns ===============
   const columns = [
     {
       title: "Session Id",
       dataIndex: "id",
-      render: (value) => `#${value}`,
     },
     {
       title: "Session Name",
-      dataIndex: "title",
+      dataIndex: "name",
     },
     {
       title: "Thumbnail",
       dataIndex: "thumbnail",
-      render: (icon) => (
-        <Tooltip title="Thumbnail Video">
-          <button>{icon}</button>
-        </Tooltip>
-      ),
+      render: (value, record) =>
+        value ? (
+          <Tooltip title="See Thumbnail">
+            <button
+              onClick={() => {
+                setShowThumbnailModal(true);
+                setSelectedSession(record);
+              }}
+            >
+              {value?.includes("images") ? (
+                <Icon
+                  icon="material-symbols:image-outline-sharp"
+                  width="24"
+                  height="24"
+                />
+              ) : (
+                value?.includes("videos") && (
+                  <Icon icon="ri:video-line" width="24" height="24" />
+                )
+              )}
+            </button>
+          </Tooltip>
+        ) : (
+          "--"
+        ),
     },
     {
       title: "Location",
       dataIndex: "location",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-    },
-    {
-      title: "Time",
-      render: (_, record) => {
-        return (
-          <span>
-            {record.startTime} - {record.endTime}
-          </span>
-        );
-      },
-    },
-    {
       title: "Trainer",
-      dataIndex: "trainer",
+      dataIndex: "coach",
       render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <Image
-              src={value.image.src}
-              alt={value.name}
-              height={30}
-              width={30}
-              className="aspect-square rounded-full object-cover"
+            <CustomAvatar
+              src={value?.user?.photoUrl}
+              name={value?.user?.name}
+              size={30}
             />
-            <p>{value.name}</p>
+            <p>{value?.user?.name}</p>
           </Flex>
         );
       },
     },
     {
+      title: "Price",
+      dataIndex: "price",
+      render: (value) => {
+        return <span>${value}</span>;
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (value, record) => {
+        return (
+          <Flex vertical align="center" gap={10}>
+            <Tag color={getTagColor(value)} className="capitalize">
+              {value}
+            </Tag>
+
+            <button
+              className="rounded-xl border border-slate-400 px-2 text-xs text-slate-600 transition-colors duration-200 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
+              onClick={() => handleChangeSessionStatus(record)}
+            >
+              Change Status
+            </button>
+          </Flex>
+        );
+      },
+      filters: [
+        { text: "Active", value: "active" },
+        { text: "Deactive", value: "deactive" },
+      ],
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
+    },
+    {
       title: "Action",
-      render: () => {
+      render: (_, record) => {
         return (
           <Flex align="center" justify="start" gap={5}>
             <Tooltip title="Show Details">
@@ -105,6 +182,10 @@ export default function SessionManagementTable() {
                   />
                 }
                 style={{ boxShadow: "none" }}
+                onClick={() => {
+                  setShowViewSessionModal(true);
+                  setSelectedSession(record);
+                }}
               />
             </Tooltip>
 
@@ -121,13 +202,17 @@ export default function SessionManagementTable() {
                 }
                 size="large"
                 style={{ boxShadow: "none" }}
-                onClick={() => setShowEditSessionModal(true)}
+                onClick={() => {
+                  setShowEditSessionModal(true);
+                  setSelectedSession(record);
+                }}
               />
             </Tooltip>
 
             <CustomConfirm
               title="Are you sure?"
               description="This session will be permanently cancelled."
+              onConfirm={() => handleDeleteSession(record?._id)}
             >
               <Tooltip title="Cancel Session">
                 <Button
@@ -149,15 +234,16 @@ export default function SessionManagementTable() {
       },
     },
   ];
+  console.log(selectedSession);
 
   return (
-    <div className="space-y-5 rounded-xl bg-white p-5">
+    <div className="min-h-[85vh] space-y-5 rounded-xl bg-white p-5">
       <Flex justify="between" align="center" gap={16}>
         <h4 className="flex-1 text-2xl font-semibold">Session Management</h4>
 
         <Search
-          placeholder="Search Sessions..."
-          onSearch={(value) => console.log(value)}
+          placeholder="Search sessions by name, id..."
+          onSearch={(value) => setSearchTerm(value)}
           size="large"
           style={{
             width: 300,
@@ -180,15 +266,28 @@ export default function SessionManagementTable() {
       <Table
         style={{ overflowX: "auto" }}
         columns={columns}
-        dataSource={data}
+        dataSource={sessions}
         scroll={{ x: "100%" }}
-        className="notranslate"
+        loading={isLoading}
         pagination={{
-          pageSize: 15,
+          total: sessionsMeta?.total,
+          current: useSearchParams().get("page") || 1,
+          pageSize: 10,
+          onChange: (page, pageSize) => {
+            router.push(
+              currentPathname + "?" + createQueryString({ page, pageSize }),
+            );
+          },
         }}
       ></Table>
 
       {/* Session Modals */}
+      <ViewSessionModal
+        open={showViewSessionModal}
+        setOpen={setShowViewSessionModal}
+        session={selectedSession}
+      />
+
       <AddSessionModal
         open={showAddSessionModal}
         setOpen={setShowAddSessionModal}
@@ -197,6 +296,13 @@ export default function SessionManagementTable() {
       <EditSessionModal
         open={showEditSessionModal}
         setOpen={setShowEditSessionModal}
+        session={selectedSession}
+      />
+
+      <SessionThumbnailModal
+        open={showThumbnailModal}
+        setOpen={setShowThumbnailModal}
+        thumbnail={selectedSession?.thumbnail}
       />
     </div>
   );

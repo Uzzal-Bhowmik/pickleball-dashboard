@@ -2,7 +2,6 @@
 
 import { Controller } from "react-hook-form";
 import { Form } from "antd";
-// import JoditEditor, { Jodit } from "jodit-react";
 import dynamic from "next/dynamic";
 
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -12,7 +11,7 @@ const JoditEditor = dynamic(() => import("jodit-react"), {
 export default function UTextEditor({
   name,
   label,
-  placeholder,
+  placeholder = "",
   required = false,
   defaultValue,
 }) {

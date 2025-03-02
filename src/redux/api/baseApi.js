@@ -5,7 +5,7 @@ import { logout, setUser } from "../features/authSlice";
 import { getBackendBaseUrl } from "@/config";
 
 const prepareAuthHeaders = (headers, state) => {
-  const otpToken = getFromSessionStorage("signUpToken");
+  const changePassToken = getFromSessionStorage("changePassToken");
   const forgotPassToken = getFromSessionStorage("forgotPassToken");
   const token = state?.auth?.token;
 
@@ -13,12 +13,12 @@ const prepareAuthHeaders = (headers, state) => {
     headers.set("authorization", token);
   }
 
-  if (otpToken) {
-    headers.set("token", otpToken);
+  if (changePassToken) {
+    headers.set("authorization", changePassToken);
   }
 
   if (forgotPassToken) {
-    headers.set("token", forgotPassToken);
+    headers.set("authorization", forgotPassToken);
   }
 
   return headers;

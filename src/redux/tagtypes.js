@@ -12,6 +12,7 @@ export const tagTypes = {
   bookings: "Bookings",
   reviews: "Reviews",
   meta: "Meta",
+  settings: "Settings",
 };
 
 export const tagTypesList = Object.values(tagTypes);

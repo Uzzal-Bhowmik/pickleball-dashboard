@@ -5,9 +5,5 @@ export const metadata = {
   description: "Admin set new password page",
 };
 export default function SetNewPasswordPage() {
-  return (
-    <section className="h-screen flex-center w-full">
-      <SetPasswordForm />
-    </section>
-  );
+  return <SetPasswordForm />;
 }

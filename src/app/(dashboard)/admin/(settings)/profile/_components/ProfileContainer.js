@@ -1,17 +1,30 @@
-import Image from "next/image";
+"use client";
+
+import { Image } from "antd";
 import adminImg from "@/assets/images/user-avatar-md.png";
 import { ImagePlus } from "lucide-react";
 import { ConfigProvider } from "antd";
 import ChangePassForm from "./ChangePassForm";
 import EditProfileForm from "./EditProfileForm";
 import { Tabs } from "antd";
+import { useGetProfileQuery } from "@/redux/api/authApi";
+import { useSelector } from "react-redux";
+import placeholderImage from "../../../../../../../public/placeholder-image.jpg";
+import ChangeProfilePicModal from "./ChangeProfilePicModal";
+import { useState } from "react";
 
 export default function ProfileContainer() {
+  const userId = useSelector((state) => state?.auth?.user?._id);
+  const [showChangePicModal, setShowChangePicModal] = useState(false);
+
+  const { data: myProfileRes } = useGetProfileQuery({}, { skip: !userId });
+  const myProfile = myProfileRes?.data || {};
+
   const tabItems = [
     {
       key: "editProfile",
       label: "Edit Profile",
-      children: <EditProfileForm />,
+      children: <EditProfileForm myProfile={myProfile} />,
     },
     {
       key: "changePassword",
@@ -26,22 +39,36 @@ export default function ProfileContainer() {
         {/* Profile pic */}
         <section className="flex-center gap-x-3">
           <div className="relative w-max">
-            <Image
-              src={adminImg}
-              alt="Admin avatar"
-              width={1200}
-              height={1200}
-              className="aspect-square h-auto w-[160px] rounded-full border-2 border-primary p-1"
-            />
+            {myProfile?.photoUrl ? (
+              <Image
+                src={adminImg}
+                alt="Admin avatar"
+                height={150}
+                width={150}
+                className="aspect-square h-auto w-[160px] rounded-full border-2 border-primary object-cover object-center p-1"
+                fallback={"/placeholder-image.jpg"}
+              />
+            ) : (
+              <Image
+                src={placeholderImage?.src}
+                alt="Admin avatar"
+                height={150}
+                width={150}
+                className="aspect-square h-auto w-[160px] rounded-full border-2 border-primary object-cover object-center p-1"
+              />
+            )}
 
             {/* Edit button */}
-            <button className="flex-center absolute bottom-2 right-2 aspect-square rounded-full bg-primary p-2 text-white/95">
+            <button
+              className="flex-center absolute bottom-2 right-2 aspect-square rounded-full bg-primary p-2 text-white/95"
+              onClick={() => setShowChangePicModal(true)}
+            >
               <ImagePlus size={18} />
             </button>
           </div>
 
           <div>
-            <h3 className="text-3xl font-semibold">Glimm Catcher</h3>
+            <h3 className="text-3xl font-semibold">{myProfile?.name}</h3>
             <p className="text-primary-blue mt-1 text-lg font-medium">
               Administrator
             </p>
@@ -53,6 +80,12 @@ export default function ProfileContainer() {
           <Tabs defaultActiveKey="editProfile" centered items={tabItems} />
         </section>
       </div>
+
+      <ChangeProfilePicModal
+        open={showChangePicModal}
+        setOpen={setShowChangePicModal}
+        profile={myProfile}
+      />
     </ConfigProvider>
   );
 }

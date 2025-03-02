@@ -7,11 +7,67 @@ import USwitch from "@/components/Form/USwitch";
 import UTextArea from "@/components/Form/UTextArea";
 import UTimePicker from "@/components/Form/UTimePicker";
 import UUpload from "@/components/Form/UUpload";
+import { useCreateSessionMutation } from "@/redux/api/sessionApi";
+import { useGetAllTrainersQuery } from "@/redux/api/trainerApi";
+import catchAsync from "@/utils/catchAsync";
+import { formatTime } from "@/utils/formatTime";
+import { Switch } from "antd";
+import { Col, Flex, Row } from "antd";
 import { Button, Modal } from "antd";
+import dayjs from "dayjs";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AddSessionModal({ open, setOpen }) {
+  const [enableWaitlist, setEnableWaitlist] = useState(false);
+
+  // Get all trainer/coach
+  const { data: trainerRes } = useGetAllTrainersQuery();
+
+  // Create session
+  const [createSession, { isLoading: isCreatingSession }] =
+    useCreateSessionMutation();
+
   const onSubmit = (data) => {
-    console.log(data);
+    const image = data?.image?.length > 0 ? data?.image[0] : null;
+
+    const formData = new FormData();
+
+    // Append image
+    if (image) {
+      formData.append("image", image.originFileObj);
+    }
+
+    // Format times
+    const formattedStartTime = formatTime.dateTimeObjToString(
+      data?.start_time,
+      "HH:mm",
+    );
+    const formattedEndTime = formatTime.dateTimeObjToString(
+      data?.end_time,
+      "HH:mm",
+    );
+
+    delete data["image"];
+    delete data["start_time"];
+    delete data["end_time"];
+
+    formData.append(
+      "data",
+      JSON.stringify({
+        ...data,
+        start_time: formattedStartTime,
+        end_time: formattedEndTime,
+        enable_waitlist: enableWaitlist,
+      }),
+    );
+
+    catchAsync(async () => {
+      await createSession(formData).unwrap();
+
+      toast.success("Session created successfully");
+      setOpen(false);
+    });
   };
 
   return (
@@ -24,89 +80,125 @@ export default function AddSessionModal({ open, setOpen }) {
     >
       <FormWrapper onSubmit={onSubmit}>
         <UUpload
-          name="thumbnail"
+          name="image"
           label="Upload Thumbnail Field"
           uploadTitle="thumbnail"
+          fileType="image"
         />
 
         <div className="grid grid-cols-2 gap-x-8">
-          <UInput name="sessionTitle" label="Session Title" />
+          <UInput name="name" label="Session Title" required />
+
           <USelect
-            name="skillLabel"
+            name="skill_level"
             label="Skill Label"
-            placeholder="Select skill label"
             options={[
               {
                 label: "Beginner",
-                value: "Beginner",
+                value: "beginner",
               },
               {
                 label: "Intermediate",
-                value: "Intermediate",
+                value: "intermediate",
               },
               {
                 label: "Advanced",
-                value: "Advanced",
+                value: "advanced",
               },
             ]}
+            required
           />
 
-          <UTextArea name="description" label="Description" />
+          <UTextArea name="description" label="Description" required />
+
           <USelect
             name="coach"
             label="Select Coach"
-            options={[
-              {
-                label: "John Doe",
-                value: "John Doe",
-              },
-              {
-                label: "John Doe 2",
-                value: "John Doe 2",
-              },
-              {
-                label: "John Doe 2",
-                value: "John Doe 2",
-              },
-              {
-                label: "John Doe 2",
-                value: "John Doe 2",
-              },
-            ]}
+            options={trainerRes?.data?.map((trainer) => ({
+              label: trainer?.user?.name,
+              value: trainer?._id,
+            }))}
+            required
           />
-
-          <UInput name="participantsAllowed" label="Max Participants Allowed" />
-          <UTimePicker
-            name="time"
-            label="Time"
-            style={{ backgroundColor: "transparent" }}
-          />
-
-          <UInput type="number" name="duration" label="Duration" />
-
-          <UInput type="number" name="memberPrice" label="Member Price" />
 
           <UInput
             type="number"
-            name="nonMemberPrice"
-            label="Non-Member Price"
+            name="max_participants"
+            label="Max Participants Allowed"
+            required
           />
 
-          <UInput name="Location" label="Location" />
+          <Row gutter={20}>
+            <Col span={12}>
+              <UTimePicker
+                name="start_time"
+                label="Start Time"
+                format="HH:mm"
+                use12Hours={false}
+                required
+              />
+            </Col>
+
+            <Col span={12}>
+              <UTimePicker
+                name="end_time"
+                label="End Time"
+                format="HH:mm"
+                use12Hours={false}
+                required
+              />
+            </Col>
+          </Row>
 
           <UInput
             type="number"
-            name="maxWaitListSpots"
+            name="duration"
+            label="Duration (in minutes!)"
+            required
+          />
+
+          <UInput
+            type="number"
+            name="price"
+            label="Price"
+            prefix={"$"}
+            required
+          />
+
+          <UInput name="location" label="Location" required />
+          <UInput
+            name="locationLink"
+            label="Location Link (Optional)"
+            placeholder="https://maps.app.goo.gl/pTYQXSawQsUKMvsq5"
+            required={false}
+          />
+
+          <Flex vertical align="start" gap={10}>
+            <label htmlFor="enableWaitlist">Enable Waitlist</label>
+            <Switch
+              id="enableWaitlist"
+              value={enableWaitlist}
+              onChange={setEnableWaitlist}
+              style={{
+                width: "max-content",
+              }}
+            />
+          </Flex>
+
+          <UInput
+            type="number"
+            name="max_waitlist"
             label="Maximum Wait List Spots"
+            disabled={!enableWaitlist}
+            required={false}
           />
-
-          <USwitch name="waitlist" label="Enable Waitlist" />
         </div>
 
         <Button
           htmlType="submit"
           type="primary"
           size="large"
+          loading={isCreatingSession}
           className="w-full"
         >
           Submit

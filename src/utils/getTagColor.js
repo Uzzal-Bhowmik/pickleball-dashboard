@@ -4,6 +4,9 @@ const getTagColor = (value) => {
     case "active":
       color = "green-inverse";
       break;
+    case "deactive":
+      color = "red-inverse";
+      break;
     case "blocked":
       color = "red-inverse";
       break;
@@ -18,6 +21,9 @@ const getTagColor = (value) => {
       break;
     case "refunded":
       color = "red";
+      break;
+    case "unpaid":
+      color = "pink";
       break;
   }
 

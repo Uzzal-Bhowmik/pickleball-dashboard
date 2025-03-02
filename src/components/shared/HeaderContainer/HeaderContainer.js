@@ -15,6 +15,10 @@ import formatUrl from "@/utils/formatUrl";
 import { usePathname } from "next/navigation";
 import { Dropdown } from "antd";
 import { Bell } from "lucide-react";
+import { useGetProfileQuery } from "@/redux/api/authApi";
+import { useSelector } from "react-redux";
+import { Avatar } from "antd";
+import Image from "next/image";
 
 const { Header } = Layout;
 
@@ -56,6 +60,10 @@ export default function HeaderContainer() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } =
     useContext(MainLayoutContext);
   const currentPathname = usePathname();
+
+  const userId = useSelector((state) => state?.auth?.user?._id);
+  const { data: myProfileRes } = useGetProfileQuery({}, { skip: !userId });
+  const myProfile = myProfileRes?.data || {};
 
   return (
     <Header
@@ -105,7 +113,27 @@ export default function HeaderContainer() {
           href={"/admin/profile"}
           className="hover:text-primary-blue group flex items-center gap-x-2 text-black"
         >
-          <CustomAvatar src={userAvatar?.src} size={50} />
+          {myProfile?.photoUrl ? (
+            <Image
+              src={myProfile?.photoUrl}
+              alt={`Avatar image of admin: ${myProfile?.name}`}
+              width={48}
+              height={48}
+              className="border-primary-black aspect-square rounded-full border-2 p-0.5 group-hover:border"
+            />
+          ) : (
+            <Avatar
+              style={{
+                backgroundColor: "var(--primary)",
+                verticalAlign: "middle",
+                textTransform: "uppercase",
+                fontWeight: " bold",
+              }}
+              size={48}
+            >
+              {myProfile?.name && myProfile?.name[0]}
+            </Avatar>
+          )}
         </Link>
       </div>
     </Header>

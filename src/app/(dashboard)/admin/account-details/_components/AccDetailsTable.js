@@ -16,6 +16,8 @@ import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import CustomAvatar from "@/components/CustomAvatar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useQueryString from "@/hooks/useQueryString";
+import { Flex, Input } from "antd";
+const { Search } = Input;
 
 const AccDetailsTable = () => {
   const router = useRouter();
@@ -139,15 +141,20 @@ const AccDetailsTable = () => {
   ];
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#1B70A6",
-          colorInfo: "#1B70A6",
-        },
-      }}
-    >
-      <h4 className="text-2xl font-semibold">Recent Registration</h4>
+    <div className="min-h-[85vh] space-y-5 rounded-xl bg-white p-5 pb-0">
+      <Flex justify="between" align="center">
+        <h4 className="flex-1 text-2xl font-semibold">User Management</h4>
+
+        <Search
+          placeholder="Search by user id, name or email..."
+          onSearch={(value) => setSearchText(value)}
+          size="large"
+          style={{
+            width: 300,
+          }}
+          allowClear
+        />
+      </Flex>
 
       <div className="my-5">
         <Table
@@ -180,7 +187,7 @@ const AccDetailsTable = () => {
         setOpen={setShowProfileModal}
         user={selectedUser}
       />
-    </ConfigProvider>
+    </div>
   );
 };
 

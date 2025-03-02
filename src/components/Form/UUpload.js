@@ -22,6 +22,12 @@ export default function UUpload({
       name={name}
       control={control}
       defaultValue={fileList}
+      rules={{
+        required: {
+          value: required,
+          message: `${label} is required`,
+        },
+      }}
       render={({ field, fieldState: { error } }) => (
         <div className="mb-3">
           <label

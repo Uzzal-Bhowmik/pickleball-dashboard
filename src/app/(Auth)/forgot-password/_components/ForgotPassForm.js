@@ -7,17 +7,32 @@ import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { Button } from "antd";
 import { ArrowLeft } from "lucide-react";
+import { useForgotPasswordMutation } from "@/redux/api/authApi";
+import { useRouter } from "next/navigation";
+import catchAsync from "@/utils/catchAsync";
+import { setToSessionStorage } from "@/utils/sessionStorage";
+import toast from "react-hot-toast";
 
 export default function ForgotPassForm() {
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const router = useRouter();
+
   const onSubmit = (data) => {
-    console.log(data);
+    catchAsync(async () => {
+      const res = await forgotPassword(data).unwrap();
+      toast.success("Success!! An otp has been sent to your email.");
+
+      // set forgotPassToken in sessionStorage
+      setToSessionStorage("forgotPassToken", res?.data?.verifyToken);
+      router.push("/otp-verification");
+    });
   };
 
   return (
-    <div className="px-6 py-8 w-full">
+    <div className="w-full px-6 py-8">
       <Link
         href="/login"
-        className="text-primary-blue flex-center-start gap-x-2 font-medium hover:text-primary-blue/85 mb-4"
+        className="text-primary-blue flex-center-start hover:text-primary-blue/85 mb-4 gap-x-2 font-medium"
       >
         <ArrowLeft size={18} /> Back to login
       </Link>
@@ -29,7 +44,7 @@ export default function ForgotPassForm() {
         </p>
       </section>
 
-      <FormWrapper onSubmit={onSubmit} resolver={zodResolver(forgotPassSchema)}>
+      <FormWrapper onSubmit={onSubmit}>
         <UInput
           name="email"
           type="email"
@@ -40,9 +55,11 @@ export default function ForgotPassForm() {
         />
 
         <Button
+          htmlType="submit"
           type="primary"
           size="large"
-          className="w-full !font-semibold !h-10"
+          className="!h-10 w-full !font-semibold"
+          loading={isLoading}
         >
           Submit
         </Button>

@@ -35,8 +35,8 @@ const authApi = baseApi.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (data) => ({
-        url: "/auth/forgot-password",
-        method: "PATCH",
+        url: "/auth/forget-password",
+        method: "POST",
         body: data,
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const authApi = baseApi.injectEndpoints({
     resetPassword: builder.mutation({
       query: (data) => ({
         url: "/auth/reset-password",
-        method: "PATCH",
+        method: "POST",
         body: data,
       }),
 
@@ -76,13 +76,14 @@ const authApi = baseApi.injectEndpoints({
     changePassword: builder.mutation({
       query: (data) => ({
         url: "/auth/change-password",
-        method: "PATCH",
+        method: "POST",
         body: data,
       }),
 
       invalidatesTags: [tagTypes.user, tagTypes.auth],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
