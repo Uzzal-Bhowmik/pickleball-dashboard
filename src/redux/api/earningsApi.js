@@ -5,7 +5,7 @@ const earningsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllEarnings: builder.query({
       query: (query) => ({
-        url: `/payments`,
+        url: `/payments/dashboard-data`,
         method: "GET",
         params: query,
       }),
