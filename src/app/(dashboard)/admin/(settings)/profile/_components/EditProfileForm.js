@@ -3,9 +3,7 @@
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { useUpdateProfileMutation } from "@/redux/api/authApi";
-import { editProfileSchema } from "@/schema/profileSchema";
 import catchAsync from "@/utils/catchAsync";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import toast from "react-hot-toast";
 
@@ -17,8 +15,6 @@ export default function EditProfileForm({ myProfile }) {
       toast.success("Profile Updated Successfully");
     });
   };
-
-  if (!myProfile) return <PageLoader />;
 
   const defaultValues = {
     name: myProfile?.name,
