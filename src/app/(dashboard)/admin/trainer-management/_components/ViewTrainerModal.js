@@ -1,7 +1,5 @@
 import { Tag } from "antd";
 import { Modal } from "antd";
-import Image from "next/image";
-import userImage from "@/assets/images/session/user.png";
 import CustomAvatar from "@/components/CustomAvatar";
 import { Flex } from "antd";
 
@@ -58,6 +56,7 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
           </label>
           <p className="font-medium">${selectedTrainer?.per_hour_rate}/hour</p>
         </div>
+
         <div className="space-y-2">
           <label className="text-muted-foreground text-sm font-bold">
             Availability
@@ -69,6 +68,24 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
               </Tag>
             ))}
           </Flex>
+        </div>
+
+        <div>
+          <label className="text-muted-foreground text-sm font-bold">
+            Time Slot
+          </label>
+          <p className="font-medium">
+            {selectedTrainer?.start_time} - {selectedTrainer?.end_time}
+          </p>
+        </div>
+
+        <div>
+          <label className="text-muted-foreground text-sm font-bold">
+            Contact Number
+          </label>
+          <p className="font-medium">
+            {selectedTrainer?.user?.contactNumber || "--"}
+          </p>
         </div>
       </div>
 

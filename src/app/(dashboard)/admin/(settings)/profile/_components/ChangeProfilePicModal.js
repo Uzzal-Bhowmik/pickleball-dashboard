@@ -31,12 +31,12 @@ export default function ChangeProfilePicModal({ open, setOpen, profile }) {
   }
 
   const defaultValues = {
-    image: profile?.image
+    image: profile?.photoUrl
       ? [
           {
             uid: "-1",
-            name: "profile_image",
-            url: profile?.image,
+            name: "profile_picture",
+            url: profile?.photoUrl,
             status: "completed",
           },
         ]

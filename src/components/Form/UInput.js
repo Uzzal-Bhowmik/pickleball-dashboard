@@ -21,6 +21,12 @@ const UInput = ({
   return (
     <Controller
       name={name}
+      rules={{
+        required: {
+          value: true,
+          message: `${label} is required`,
+        },
+      }}
       render={({ field, fieldState: { error } }) => (
         <Form.Item
           label={

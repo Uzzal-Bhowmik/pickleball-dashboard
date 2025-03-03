@@ -41,15 +41,17 @@ const packageApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.package],
     }),
     updatePackage: builder.mutation({
-        query: ({id, data}) => ({
-          url: `/packages/${id}`,
-          method: "PATCH",
-          body: data,
-        }),
-  
-        invalidatesTags: [tagTypes.package],
+      query: ({ id, data }) => ({
+        url: `/packages/${id}`,
+        method: "PATCH",
+        body: data,
       }),
+
+      invalidatesTags: [tagTypes.package],
+    }),
   }),
+
+  overrideExisting: true,
 });
 
 export const {

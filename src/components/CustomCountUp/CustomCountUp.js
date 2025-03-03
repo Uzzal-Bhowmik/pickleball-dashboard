@@ -7,9 +7,8 @@ export default function CustomCountUp({ start, end, duration }) {
     <CountUp
       start={start || 0}
       end={end}
-      duration={duration || 5}
-      separator=" "
-      enableScrollSpy={true}
+      duration={duration || 10}
+      separator=","
     />
   );
 }

@@ -53,6 +53,8 @@ const sessionApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.sessions],
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const {

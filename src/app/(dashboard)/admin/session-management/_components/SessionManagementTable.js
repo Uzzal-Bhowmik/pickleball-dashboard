@@ -50,8 +50,7 @@ export default function SessionManagementTable() {
   const sessionsMeta = sessionsRes?.meta || {};
 
   // Change session status
-  const [changeSessionStatus, { isLoading: isChangeSessionStatusLoading }] =
-    useChangeSessionStatusMutation();
+  const [changeSessionStatus] = useChangeSessionStatusMutation();
   const handleChangeSessionStatus = async (session) => {
     await catchAsync(async () => {
       await changeSessionStatus({
@@ -234,8 +233,6 @@ export default function SessionManagementTable() {
       },
     },
   ];
-  console.log(selectedSession);
-
   return (
     <div className="min-h-[85vh] space-y-5 rounded-xl bg-white p-5">
       <Flex justify="between" align="center" gap={16}>

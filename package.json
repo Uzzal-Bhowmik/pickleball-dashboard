@@ -33,6 +33,7 @@
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-hook-form": "^7.53.2",
     "react-hot-toast": "^2.4.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^9.2.0",
     "recharts": "^2.13.3",
     "redux-persist": "^6.0.0",

@@ -5,12 +5,10 @@ import EarningChart from "./EarningChart";
 import RecentUserTable from "./RecentUserTable";
 import UsersChart from "./UsersChart";
 import { Icon } from "@iconify/react";
-import { Tag } from "antd";
 import { Flex } from "antd";
 import OverlayLoader from "@/components/OverlayLoader/OverlayLoader";
-import { useState } from "react";
-
-// Dummy data
+import { lazy, Suspense, useState } from "react";
+import CustomCountUp from "@/components/CustomCountUp/CustomCountUp";
 
 export default function DashboardContainer() {
   const [selectedUserYear, setSelectedUserYear] = useState(
@@ -86,7 +84,10 @@ export default function DashboardContainer() {
                 {stat.label}
               </p>
 
-              <h2 className="!mt-1 text-3xl font-bold">{stat.value}</h2>
+              <h2 className="!mt-1 text-3xl font-bold">
+                {stat.key === "revenue" && "$"}
+                <CustomCountUp start={0} end={stat?.value} />
+              </h2>
 
               {/*! Don't remove this part */}
               {/* <div>

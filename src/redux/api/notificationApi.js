@@ -1,13 +1,13 @@
 import { tagTypes } from "../tagtypes";
 import { baseApi } from "./baseApi";
 
- 
+const URL_PREFIX = "/notification";
 
 const notificationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMyNotification: builder.query({
       query: (query) => ({
-        url: `/notifications`,
+        url: URL_PREFIX,
         method: "GET",
         params: query,
       }),
@@ -19,22 +19,29 @@ const notificationApi = baseApi.injectEndpoints({
         };
       },
     }),
+
     markAsRead: builder.mutation({
       query: () => ({
-        url: `/notifications`,
+        url: URL_PREFIX,
         method: "PATCH",
       }),
       invalidatesTags: [tagTypes.notification],
     }),
+
     deleteNotification: builder.mutation({
       query: () => ({
-        url: `/notifications`,
+        url: URL_PREFIX,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.notification],
     }),
   }),
+
+  overrideExisting: true,
 });
 
-export const { useGetMyNotificationQuery, useMarkAsReadMutation, useDeleteNotificationMutation } =
-  notificationApi;
+export const {
+  useGetMyNotificationQuery,
+  useMarkAsReadMutation,
+  useDeleteNotificationMutation,
+} = notificationApi;

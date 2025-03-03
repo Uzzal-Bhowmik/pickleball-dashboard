@@ -4,19 +4,59 @@ import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import USelect from "@/components/Form/USelect";
 import UTextArea from "@/components/Form/UTextArea";
-import UTextEditor from "@/components/Form/UTextEditor";
 import UTimePicker from "@/components/Form/UTimePicker";
 import UUpload from "@/components/Form/UUpload";
 import { useCreateTrainerMutation } from "@/redux/api/trainerApi";
+import catchAsync from "@/utils/catchAsync";
+import { formatTime } from "@/utils/formatTime";
 import { Divider } from "antd";
 import { Button, Modal } from "antd";
-import { PlusCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AddTrainerModal({ open, setOpen }) {
   const [addTrainer, { isLoading: isAddingTrainer }] =
     useCreateTrainerMutation();
+
   const onSubmit = (data) => {
-    console.log(data);
+    const image = data?.image?.length > 0 ? data?.image[0] : null;
+
+    const formData = new FormData();
+
+    // Append image
+    if (image) {
+      formData.append("image", image.originFileObj);
+    }
+
+    // Format times
+    const formattedStartTime = formatTime.dateTimeObjToString(
+      data?.start_time,
+      "HH:mm",
+    );
+    const formattedEndTime = formatTime.dateTimeObjToString(
+      data?.end_time,
+      "HH:mm",
+    );
+
+    delete data["confirmPassword"];
+    delete data["image"];
+    delete data["start_time"];
+    delete data["end_time"];
+
+    formData.append(
+      "data",
+      JSON.stringify({
+        ...data,
+        start_time: formattedStartTime,
+        end_time: formattedEndTime,
+      }),
+    );
+
+    catchAsync(async () => {
+      await addTrainer(formData).unwrap();
+
+      toast.success("Trainer created successfully");
+      setOpen(false);
+    });
   };
 
   return (
@@ -27,7 +67,12 @@ export default function AddTrainerModal({ open, setOpen }) {
       title="Add a new trainer"
       width={"55%"}
     >
-      <FormWrapper onSubmit={onSubmit}>
+      <FormWrapper
+        onSubmit={onSubmit}
+        defaultValues={{
+          password: "default_password",
+        }}
+      >
         <UUpload
           name="image"
           label="Upload Profile Picture"
@@ -36,7 +81,11 @@ export default function AddTrainerModal({ open, setOpen }) {
         />
 
         <UInput name="name" label="Full Name" required />
+
         <UInput type="email" name="email" label="Email" required />
+
+        <UInput name="password" label="Password" required={false} disabled />
+
         <UInput
           type="tel"
           name="contactNumber"
@@ -52,8 +101,7 @@ export default function AddTrainerModal({ open, setOpen }) {
 
         <UTextArea name="bio" label="Bio" required />
 
-        {/* <UTextEditor name="achievements" label="Achievements" required /> */}
-        <UTextArea name="achievements" label="Achievements" required />
+        <UTextArea name="achievement" label="Achievements" required />
 
         <USelect
           name="coaching_expertise"
@@ -86,9 +134,17 @@ export default function AddTrainerModal({ open, setOpen }) {
           required
         />
 
+        <UInput
+          type="number"
+          name="per_hour_rate"
+          label="Per Hour Rate"
+          prefix={"$"}
+          required
+        />
+
         <USelect
           name="availability"
-          label="Availability"
+          label="Available Days"
           options={[
             {
               label: "Saturday",
@@ -119,23 +175,16 @@ export default function AddTrainerModal({ open, setOpen }) {
               value: "fri",
             },
           ]}
-          required
-        />
-
-        <UInput
-          type="number"
-          name="per_hour_rate"
-          label="Per Hour Rate"
-          prefix={"$"}
+          mode="tags"
           required
         />
 
         <Divider
           type="horizontal"
           variant="dashed"
-          className="!border-gray-600 !text-gray-600"
+          className="!border-gray-600 !text-sm !text-gray-600"
         >
-          Time Slot
+          Time Slot for Available Days
         </Divider>
 
         <div className="flex items-center justify-between gap-x-4">
@@ -148,12 +197,12 @@ export default function AddTrainerModal({ open, setOpen }) {
           </div>
 
           <div className="w-full">
-            <UInput type="number" name="duration" label="Duration" />
+            <UInput
+              type="number"
+              name="duration"
+              label="Duration (in minutes)"
+            />
           </div>
-
-          <button>
-            <PlusCircle className="text-gray-600" />
-          </button>
         </div>
 
         <Button
@@ -161,6 +210,7 @@ export default function AddTrainerModal({ open, setOpen }) {
           type="primary"
           size="large"
           className="w-full"
+          loading={isAddingTrainer}
         >
           Submit
         </Button>

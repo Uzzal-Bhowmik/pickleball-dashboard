@@ -6,6 +6,7 @@ import { MainLayoutContext } from "@/context/MainLayoutContext";
 import { logout } from "@/redux/features/authSlice";
 import { cn } from "@/utils/cn";
 import { Icon } from "@iconify/react";
+import { Flex } from "antd";
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import Image from "next/image";
@@ -85,7 +86,7 @@ const SidebarContainer = () => {
   const sidebarLinks = [
     ...adminLinks.map((link) => ({
       key: link.id,
-      icon: <Icon icon={link.icon} height={25} width={25} />,
+      icon: <Icon icon={link.icon} height={"100%"} width={25} />,
       label: (
         <Link href={link.route} className="flex-center-between">
           {link.label}
@@ -98,7 +99,7 @@ const SidebarContainer = () => {
     })),
     {
       key: "logout",
-      icon: <Icon icon="ri:logout-circle-line" height={25} width={25} />,
+      icon: <Icon icon="ri:logout-circle-line" height={"100%"} width={25} />,
       label: <Link href="/login">Logout</Link>,
     },
   ];

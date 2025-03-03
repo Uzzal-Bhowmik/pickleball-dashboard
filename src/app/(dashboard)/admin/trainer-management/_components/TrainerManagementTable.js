@@ -17,6 +17,8 @@ import {
 import CustomAvatar from "@/components/CustomAvatar";
 import { Tag } from "antd";
 import catchAsync from "@/utils/catchAsync";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useQueryString from "@/hooks/useQueryString";
 
 const { Search } = Input;
 
@@ -26,6 +28,9 @@ export default function TrainerManagementTable() {
   const [showEditTrainerModal, setShowEditTrainerModal] = useState(false);
   const [selectedTrainer, setSelectedTrainer] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const currentPathname = usePathname();
+  const router = useRouter();
+  const { createQueryString } = useQueryString();
 
   // Query params
   const query = {};
@@ -38,7 +43,7 @@ export default function TrainerManagementTable() {
   const trainers = trainersRes?.data || [];
   const trainersMeta = trainersRes?.meta || {};
 
-  // Delete Session
+  // Delete Trainer
   const [deleteTrainer] = useDeleteTrainerMutation();
   const handleDeleteTrainer = async (trainerId) => {
     await catchAsync(async () => {
@@ -92,7 +97,13 @@ export default function TrainerManagementTable() {
       dataIndex: "availability",
       render: (value) => {
         return (
-          <Flex align="center" justify="start" wrap>
+          <Flex
+            align="center"
+            justify="start"
+            wrap="wrap"
+            gap={10}
+            style={{ maxWidth: "300px" }}
+          >
             {value?.map((item) => (
               <Tag key={item} color="green" className="capitalize">
                 {item}
@@ -139,7 +150,10 @@ export default function TrainerManagementTable() {
                 }
                 size="large"
                 style={{ boxShadow: "none" }}
-                onClick={() => setShowEditTrainerModal(true)}
+                onClick={() => {
+                  setShowEditTrainerModal(true);
+                  setSelectedTrainer(record);
+                }}
               />
             </Tooltip>
 
@@ -204,7 +218,14 @@ export default function TrainerManagementTable() {
         scroll={{ x: "100%" }}
         className="notranslate"
         pagination={{
-          pageSize: 15,
+          total: trainersMeta?.total,
+          current: useSearchParams().get("page") || 1,
+          pageSize: 10,
+          onChange: (page, pageSize) => {
+            router.push(
+              currentPathname + "?" + createQueryString({ page, pageSize }),
+            );
+          },
         }}
       ></Table>
 
@@ -223,6 +244,7 @@ export default function TrainerManagementTable() {
       <EditTrainerModal
         open={showEditTrainerModal}
         setOpen={setShowEditTrainerModal}
+        trainer={selectedTrainer}
       />
     </div>
   );

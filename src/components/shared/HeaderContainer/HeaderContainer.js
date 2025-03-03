@@ -3,58 +3,24 @@
 import { Button } from "antd";
 import "./HeaderContainer.css";
 import Link from "next/link";
-import userAvatar from "@/assets/images/user-avatar.png";
 import { Layout } from "antd";
 import { Icon } from "@iconify/react";
-import CustomAvatar from "@/components/CustomAvatar";
 import { cn } from "@/utils/cn";
 import { MainLayoutContext } from "@/context/MainLayoutContext";
 import { useContext } from "react";
-import { LanguageSwitcher } from "@/components/LangSwitcher/lang-switcher";
 import formatUrl from "@/utils/formatUrl";
 import { usePathname } from "next/navigation";
-import { Dropdown } from "antd";
 import { Bell } from "lucide-react";
 import { useGetProfileQuery } from "@/redux/api/authApi";
 import { useSelector } from "react-redux";
 import { Avatar } from "antd";
 import Image from "next/image";
-
+import { Popover } from "antd";
+import NotificationContainer from "./NotificationContainer";
+import { Check } from "lucide-react";
+import { useMarkAsReadMutation } from "@/redux/api/notificationApi";
+import toast from "react-hot-toast";
 const { Header } = Layout;
-
-// Dummy Notification Data
-const notifications = [
-  {
-    id: 1,
-    message: "A New Booking was made to Hotel #HVBV3423",
-    time: "Sat, 12:30pm",
-  },
-  {
-    id: 2,
-    message: "A Payment was made to Apartment #OYLD4353",
-    time: "Oct 24, 12:30pm",
-  },
-  {
-    id: 3,
-    message: "A New Booking was made to Hotel #PVBV3424",
-    time: "Fri, 12:30pm",
-  },
-];
-
-const notificationMenu = notifications.map((notification) => ({
-  key: notification.id,
-  label: (
-    <div className="p-2 text-start">
-      <div className="flex items-center gap-x-3">
-        <Icon icon="typcn:bell" height={26} width={26} color="var(--primary)" />
-        <div className="flex flex-col items-start">
-          <p className="text-sm font-medium">{notification.message}</p>
-          <p className="text-primary">{notification.time}</p>
-        </div>
-      </div>
-    </div>
-  ),
-}));
 
 export default function HeaderContainer() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } =
@@ -62,9 +28,21 @@ export default function HeaderContainer() {
   const currentPathname = usePathname();
 
   const userId = useSelector((state) => state?.auth?.user?._id);
+
+  // Get my profile
   const { data: myProfileRes } = useGetProfileQuery({}, { skip: !userId });
   const myProfile = myProfileRes?.data || {};
 
+  // Mark all notifications as read
+  const [markRead, { isLoading: isMarkLoading }] = useMarkAsReadMutation();
+
+  const handleMarkAllAsRead = async () => {
+    toast.promise(markRead(), {
+      loading: "Loading...",
+      success: "All notifications marked as read!",
+      error: "Something went wrong!",
+    });
+  };
   return (
     <Header
       style={{
@@ -95,23 +73,33 @@ export default function HeaderContainer() {
 
       {/* Right --- notification, user profile */}
       <div className="header-button-group flex items-center gap-x-4">
-        <Dropdown
-          menu={{ items: notificationMenu }}
-          trigger={["click"]}
-          className="header-notification-dropdown"
+        <Popover
+          placement="bottomRight"
+          title={
+            <div className="flex items-center justify-between px-2">
+              <h4 className="text-base font-semibold">All Notifications</h4>
+              <button
+                className="flex items-center gap-1 rounded-md border px-3 py-1 transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
+                onClick={handleMarkAllAsRead}
+                disabled={isMarkLoading}
+              >
+                Mark Read <Check size={15} />
+              </button>
+            </div>
+          }
+          content={<NotificationContainer />}
         >
           <button className="flex-center relative aspect-square size-11 rounded-full bg-primary !leading-none">
             <div className="absolute right-3 top-2 size-3 rounded-full bg-red-600" />
 
-            {/* <Icon icon="typcn:bell" height={26} width={26} color="#fff" /> */}
             <Bell size={24} color="#fff" />
           </button>
-        </Dropdown>
+        </Popover>
 
         {/* User */}
         <Link
           href={"/admin/profile"}
-          className="hover:text-primary-blue group flex items-center gap-x-2 text-black"
+          className="group flex items-center gap-x-2"
         >
           {myProfile?.photoUrl ? (
             <Image
@@ -119,7 +107,7 @@ export default function HeaderContainer() {
               alt={`Avatar image of admin: ${myProfile?.name}`}
               width={48}
               height={48}
-              className="border-primary-black aspect-square rounded-full border-2 p-0.5 group-hover:border"
+              className="aspect-square rounded-full border-2 border-primary object-cover object-center p-0.5 group-hover:border"
             />
           ) : (
             <Avatar

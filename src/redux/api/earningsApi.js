@@ -16,6 +16,8 @@ const earningsApi = baseApi.injectEndpoints({
       }),
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const { useGetAllEarningsQuery } = earningsApi;

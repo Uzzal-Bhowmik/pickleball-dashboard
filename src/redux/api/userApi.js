@@ -58,6 +58,8 @@ const userApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.user, tagTypes.auth],
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const {

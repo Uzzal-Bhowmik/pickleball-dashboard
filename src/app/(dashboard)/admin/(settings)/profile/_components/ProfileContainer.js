@@ -33,6 +33,8 @@ export default function ProfileContainer() {
     },
   ];
 
+  console.log(myProfile);
+
   return (
     <ConfigProvider>
       <div className="mx-auto w-full px-5 lg:w-3/4 lg:px-0 2xl:w-1/2">
@@ -41,7 +43,7 @@ export default function ProfileContainer() {
           <div className="relative w-max">
             {myProfile?.photoUrl ? (
               <Image
-                src={adminImg}
+                src={myProfile?.photoUrl}
                 alt="Admin avatar"
                 height={150}
                 width={150}

@@ -24,6 +24,8 @@ const contentApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.settings],
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const { useGetSettingsDataQuery, useUpdateSettingsDataMutation } =

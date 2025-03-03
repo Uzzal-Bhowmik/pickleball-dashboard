@@ -13,6 +13,8 @@ const dashboardApi = baseApi.injectEndpoints({
       },
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const { useGetDashboardDataQuery } = dashboardApi;

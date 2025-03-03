@@ -21,6 +21,12 @@ const USelect = ({
   return (
     <Controller
       name={name}
+      rules={{
+        required: {
+          value: true,
+          message: `${label} is required`,
+        },
+      }}
       render={({
         field: { onChange, value: fieldValue },
         fieldState: { error },

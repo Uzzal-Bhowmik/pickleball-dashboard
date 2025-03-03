@@ -44,6 +44,8 @@ const trainerApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.trainers],
     }),
   }),
+
+  overrideExisting: true,
 });
 
 export const {
