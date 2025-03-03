@@ -19,12 +19,18 @@ const authSlice = createSlice({
       state.token = token;
 
       // Set token to cookie for middleware accessibility
-      Cookies.set("pickleball-access-token", token, { path: "/" });
+      Cookies.set("pickleball-access-token", token, {
+        path: "/",
+        sameSite: true,
+      });
     },
 
     logout: (state) => {
       // Remove token for cookies
-      Cookies.remove("pickleball-access-token", { path: "/login" });
+      Cookies.remove("pickleball-access-token", {
+        path: "/",
+        sameSite: true,
+      });
       removeFromSessionStorage("pickleball-access-token");
 
       state.user = null;

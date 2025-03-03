@@ -41,8 +41,10 @@ const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
         credentials: "include",
       });
 
-      if (!res.ok) {
-        console.error("Failed to refresh token:", res.statusText);
+      console.log(res.ok);
+
+      if (!res?.ok) {
+        console.log("Failed to refresh token:", res.statusText);
         api.dispatch(logout());
         return result;
       }
@@ -63,7 +65,7 @@ const baseQueryWithRefreshToken = async (args, api, extraOptions) => {
         api.dispatch(logout());
       }
     } catch (error) {
-      console.error("Refresh token error:", error);
+      console.log("Refresh token error:", error);
       api.dispatch(logout());
     }
   }

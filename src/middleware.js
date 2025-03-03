@@ -5,13 +5,30 @@ export function middleware(request) {
   // it can be accessed from server components
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", request.nextUrl.pathname);
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+
+  const { nextUrl } = request;
+
+  // Get the accessToken value
+  const isLoggedIn = request.cookies.get("pickleball-access-token")?.value;
+
+  const isAuthRoute =
+    nextUrl.pathname === "/login" || nextUrl.pathname === "/sign-up";
+
+  // If user exists, redirect to `/` from `login`
+  if (isLoggedIn && isAuthRoute) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // If user not found, redirect to `/login` from protected routes
+  // no redirect happen if already in `/login`
+  if (!isLoggedIn && !isAuthRoute) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/admin/:path*",
+  ],
 };
