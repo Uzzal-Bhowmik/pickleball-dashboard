@@ -7,7 +7,7 @@ import { Layout } from "antd";
 import { Icon } from "@iconify/react";
 import { cn } from "@/utils/cn";
 import { MainLayoutContext } from "@/context/MainLayoutContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import formatUrl from "@/utils/formatUrl";
 import { usePathname } from "next/navigation";
 import { Bell } from "lucide-react";
@@ -26,23 +26,12 @@ export default function HeaderContainer() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } =
     useContext(MainLayoutContext);
   const currentPathname = usePathname();
-
   const userId = useSelector((state) => state?.auth?.user?._id);
 
   // Get my profile
   const { data: myProfileRes } = useGetProfileQuery({}, { skip: !userId });
   const myProfile = myProfileRes?.data || {};
 
-  // Mark all notifications as read
-  const [markRead, { isLoading: isMarkLoading }] = useMarkAsReadMutation();
-
-  const handleMarkAllAsRead = async () => {
-    toast.promise(markRead(), {
-      loading: "Loading...",
-      success: "All notifications marked as read!",
-      error: "Something went wrong!",
-    });
-  };
   return (
     <Header
       style={{
@@ -73,28 +62,7 @@ export default function HeaderContainer() {
 
       {/* Right --- notification, user profile */}
       <div className="header-button-group flex items-center gap-x-4">
-        <Popover
-          placement="bottomRight"
-          title={
-            <div className="flex items-center justify-between px-2">
-              <h4 className="text-base font-semibold">All Notifications</h4>
-              <button
-                className="flex items-center gap-1 rounded-md border px-3 py-1 transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
-                onClick={handleMarkAllAsRead}
-                disabled={isMarkLoading}
-              >
-                Mark Read <Check size={15} />
-              </button>
-            </div>
-          }
-          content={<NotificationContainer />}
-        >
-          <button className="flex-center relative aspect-square size-11 rounded-full bg-primary !leading-none">
-            <div className="absolute right-3 top-2 size-3 rounded-full bg-red-600" />
-
-            <Bell size={24} color="#fff" />
-          </button>
-        </Popover>
+        <NotificationContainer />
 
         {/* User */}
         <Link

@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "@/redux/store";
+import { SocketProvider } from "../context/SocketContextApi";
 
 export default function Providers({ children }) {
   useEffect(() => {
@@ -30,7 +31,9 @@ export default function Providers({ children }) {
       <PersistGate loading={null} persistor={persistor}>
         <MainLayoutContextProvider>
           <AntdRegistry>
-            <ConfigProvider theme={mainTheme}>{children}</ConfigProvider>
+            <ConfigProvider theme={mainTheme}>
+              <SocketProvider>{children}</SocketProvider>
+            </ConfigProvider>
 
             <NextTopLoader />
 
