@@ -13,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
 // Sidebar Links

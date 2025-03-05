@@ -20,7 +20,7 @@ import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
 import ViewSessionModal from "./ViewSessionModal";
 import catchAsync from "@/utils/catchAsync";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import SessionThumbnailModal from "./SessionThumbnailModal";
 import useQueryString from "@/hooks/useQueryString";
 

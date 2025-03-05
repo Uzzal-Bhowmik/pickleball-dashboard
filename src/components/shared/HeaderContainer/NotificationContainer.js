@@ -9,8 +9,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { List } from "antd";
 import { Spin } from "antd";
 import { Flex } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { Skeleton } from "antd";
+import { useEffect, useState } from "react";
+import { Skeleton, Divider } from "antd";
 import { Icon } from "@iconify/react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -18,40 +18,52 @@ import { cn } from "@/utils/cn";
 import { Popover } from "antd";
 import { Check } from "lucide-react";
 import { Bell } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useSocket } from "@/context/SocketContextApi";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/redux/features/authSlice";
+import textTruncate from "@/utils/textTruncate";
+import catchAsync from "@/utils/catchAsync";
+import { Loader } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
 const NotificationContainer = () => {
   const { socket } = useSocket();
   const userId = useSelector(selectUser)?._id;
+  const [notifications, setNotifications] = useState([]);
 
   const [isUnreadNotificationFound, setIsUnreadNotificationFound] =
     useState(false);
 
-  const [limit, setLimit] = useState(10);
+  // Query
+  const [page, setPage] = useState(1);
+
+  // Get all notifications
   const {
     data: notificationsRes,
     isLoading,
     isFetching,
-  } = useGetMyNotificationQuery({ limit });
+    refetch,
+  } = useGetMyNotificationQuery({ page, limit: 10 });
 
+  const notificationsMeta = notificationsRes?.meta || {};
+
+  // Set notifications in local state
+  useEffect(() => {
+    if (notificationsRes?.data) {
+      setNotifications((prev) => [...prev, ...notificationsRes?.data]);
+    }
+  }, [isFetching]);
+
+  // Load more data on infinite scroll
   const loadMoreData = () => {
-    setLimit((prevLimit) => prevLimit + 10);
+    if (page !== notificationsRes?.meta?.totalPages) {
+      setPage((page) => page + 1);
+    }
   };
 
-  const notifications = useMemo(() => {
-    if (!notificationsRes?.data?.length) {
-      return [];
-    }
-
-    return notificationsRes?.data;
-  }, [notificationsRes]);
-  const meta = notificationsRes?.meta || {};
-
+  // Check if unread notification found
   useEffect(() => {
     notifications?.slice(0, 100)?.forEach((notification) => {
       if (notification?.read === false) {
@@ -59,15 +71,38 @@ const NotificationContainer = () => {
         return;
       }
     });
-  }, [notifications]);
+  }, [notificationsRes]);
+
+  // Mark all notifications as read
+  const [markRead, { isLoading: isMarkLoading }] = useMarkAsReadMutation();
+
+  const handleMarkAllAsRead = () => {
+    catchAsync(async () => {
+      await markRead().unwrap();
+      setIsUnreadNotificationFound(false);
+
+      // Refetch notifications and replace the state
+      const { data: newNotificationsRes } = await refetch();
+      if (newNotificationsRes?.data) {
+        setNotifications(newNotificationsRes.data); // Replace old notifications
+      }
+
+      toast.success("All notifications marked");
+    });
+  };
 
   // handle new notification
-  const handleNewNotification = async (data) => {
-    console.log({ notification: data });
-
-    if (!isUnreadNotificationFound) {
-      setIsUnreadNotificationFound(false);
+  const handleNewNotification = async (notification) => {
+    if (notification?.message) {
+      toast(<p>{textTruncate(notification?.message, 200)}</p>, {
+        theme: "light",
+        type: "info",
+        className: "!bg-blue-100 !text-[15px] !text-black !font-semibold",
+      });
     }
+
+    setNotifications((prev) => [notification, ...prev]);
+    setIsUnreadNotificationFound(true);
   };
 
   useEffect(() => {
@@ -78,32 +113,6 @@ const NotificationContainer = () => {
     return () => socket?.off(`notification::${userId}`, handleNewNotification);
   }, [socket, userId]);
 
-  // Mark all notifications as read
-  const [markRead, { isLoading: isMarkLoading }] = useMarkAsReadMutation();
-
-  const handleMarkAllAsRead = async () => {
-    const toastId = toast.loading("Loading...");
-
-    try {
-      await markRead().unwrap();
-      toast.success("All notifications marked as read!", {
-        id: toastId,
-      });
-
-      setIsUnreadNotificationFound(false);
-    } catch (error) {
-      toast.error("Something went wrong! Please try again later.", {
-        id: toastId,
-      });
-    }
-
-    toast.promise(markRead(), {
-      loading: "Loading...",
-      success: "All notifications marked as read!",
-      error: "Something went wrong!",
-    });
-  };
-
   return (
     <Popover
       placement="bottomRight"
@@ -111,11 +120,17 @@ const NotificationContainer = () => {
         <div className="flex items-center justify-between px-2">
           <h4 className="text-base font-semibold">All Notifications</h4>
           <button
-            className="flex items-center gap-1 rounded-md border px-3 py-1 transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
+            className="flex-center flex items-center gap-1 rounded-md border px-3 py-1 transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
             onClick={handleMarkAllAsRead}
             disabled={isMarkLoading}
           >
-            Mark Read <Check size={15} />
+            {isMarkLoading ? (
+              <Loader className="animate-spin" size={18} />
+            ) : (
+              <>
+                Mark Read <Check size={15} />
+              </>
+            )}
           </button>
         </div>
       }
@@ -137,9 +152,14 @@ const NotificationContainer = () => {
             <InfiniteScroll
               dataLength={notifications.length}
               next={loadMoreData}
-              hasMore={notifications.length < meta.total} // Ensure it stops correctly
+              hasMore={notifications.length < notificationsMeta.total} // Ensure it stops correctly
               loader={<Skeleton active loading={isFetching} />}
               scrollableTarget="scrollableDiv"
+              endMessage={
+                <Divider style={{ fontSize: "14px", color: "gray" }}>
+                  Yay! You&apos;ve seen it all 🎉
+                </Divider>
+              }
               className="scroll-hide"
             >
               <List

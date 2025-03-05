@@ -11,7 +11,7 @@ import { Flex } from "antd";
 import { Spin } from "antd";
 import { Button } from "antd";
 import { Edit } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function TermsConditionsContainer() {
   const { data, isLoading: isLoadingData } = useGetSettingsDataQuery();

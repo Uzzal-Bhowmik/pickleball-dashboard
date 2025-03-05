@@ -9,6 +9,7 @@ import { Flex } from "antd";
 import OverlayLoader from "@/components/OverlayLoader/OverlayLoader";
 import { lazy, Suspense, useState } from "react";
 import CustomCountUp from "@/components/CustomCountUp/CustomCountUp";
+import textTruncate from "@/utils/textTruncate";
 
 export default function DashboardContainer() {
   const [selectedUserYear, setSelectedUserYear] = useState(

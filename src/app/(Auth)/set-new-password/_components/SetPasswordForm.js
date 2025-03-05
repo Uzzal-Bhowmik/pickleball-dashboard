@@ -16,7 +16,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function SetPasswordForm() {
   const [updatePassword, { isLoading }] = useResetPasswordMutation();

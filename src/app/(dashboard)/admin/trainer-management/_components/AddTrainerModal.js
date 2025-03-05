@@ -11,7 +11,7 @@ import catchAsync from "@/utils/catchAsync";
 import { formatTime } from "@/utils/formatTime";
 import { Divider } from "antd";
 import { Button, Modal } from "antd";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function AddTrainerModal({ open, setOpen }) {
   const [addTrainer, { isLoading: isAddingTrainer }] =

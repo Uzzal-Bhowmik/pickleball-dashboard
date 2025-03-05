@@ -11,7 +11,7 @@ import { Icon } from "@iconify/react/dist/iconify";
 import { useGetAllUserQuery, useUpdateUserMutation } from "@/redux/api/userApi";
 import dayjs from "dayjs";
 import catchAsync from "@/utils/catchAsync";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
 import CustomAvatar from "@/components/CustomAvatar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

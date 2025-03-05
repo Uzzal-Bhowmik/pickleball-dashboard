@@ -2,7 +2,7 @@ import { Upload } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { CloudUpload } from "lucide-react";
 import { message } from "antd";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function UUpload({
   name,

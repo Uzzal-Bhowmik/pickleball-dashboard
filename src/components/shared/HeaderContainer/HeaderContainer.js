@@ -19,7 +19,7 @@ import { Popover } from "antd";
 import NotificationContainer from "./NotificationContainer";
 import { Check } from "lucide-react";
 import { useMarkAsReadMutation } from "@/redux/api/notificationApi";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 const { Header } = Layout;
 
 export default function HeaderContainer() {

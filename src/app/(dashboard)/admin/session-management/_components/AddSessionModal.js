@@ -16,7 +16,7 @@ import { Col, Flex, Row } from "antd";
 import { Button, Modal } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function AddSessionModal({ open, setOpen }) {
   const [enableWaitlist, setEnableWaitlist] = useState(false);

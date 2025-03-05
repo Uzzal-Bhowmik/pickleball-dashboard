@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPassSchema, loginSchema } from "@/schema/authSchema";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { Button } from "antd";
@@ -11,7 +9,7 @@ import { useForgotPasswordMutation } from "@/redux/api/authApi";
 import { useRouter } from "next/navigation";
 import catchAsync from "@/utils/catchAsync";
 import { setToSessionStorage } from "@/utils/sessionStorage";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function ForgotPassForm() {
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();

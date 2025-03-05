@@ -11,6 +11,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "@/redux/store";
 import { SocketProvider } from "../context/SocketContextApi";
+import { ToastContainer } from "react-toastify";
+import { Bounce } from "react-toastify";
 
 export default function Providers({ children }) {
   useEffect(() => {
@@ -37,7 +39,19 @@ export default function Providers({ children }) {
 
             <NextTopLoader />
 
-            <Toaster containerStyle={{ fontWeight: "bold", color: "#000" }} />
+            <ToastContainer
+              position="top-right"
+              autoClose={4500}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
           </AntdRegistry>
         </MainLayoutContextProvider>
       </PersistGate>

@@ -9,7 +9,7 @@ import catchAsync from "@/utils/catchAsync";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
 export default function ChangePassForm() {

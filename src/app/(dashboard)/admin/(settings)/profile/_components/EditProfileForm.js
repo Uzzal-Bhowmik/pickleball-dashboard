@@ -5,7 +5,7 @@ import UInput from "@/components/Form/UInput";
 import { useUpdateProfileMutation } from "@/redux/api/authApi";
 import catchAsync from "@/utils/catchAsync";
 import { Button } from "antd";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function EditProfileForm({ myProfile }) {
   const [editProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();

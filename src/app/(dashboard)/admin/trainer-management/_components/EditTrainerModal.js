@@ -12,7 +12,7 @@ import { Divider } from "antd";
 import { Button, Modal } from "antd";
 import dayjs from "dayjs";
 import { PlusCircle } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export default function EditTrainerModal({ open, setOpen, trainer }) {
   const [editTrainer, { isLoading: isUpdatingTrainer }] =

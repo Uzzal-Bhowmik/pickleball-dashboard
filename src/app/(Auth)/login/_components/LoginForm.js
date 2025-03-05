@@ -11,7 +11,7 @@ import logo from "@/assets/logos/logo.svg";
 import Image from "next/image";
 import { useSignInMutation } from "@/redux/api/authApi";
 import catchAsync from "@/utils/catchAsync";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { setUser } from "@/redux/features/authSlice";
