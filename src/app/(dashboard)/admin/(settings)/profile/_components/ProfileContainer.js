@@ -33,8 +33,6 @@ export default function ProfileContainer() {
     },
   ];
 
-  console.log(myProfile);
-
   return (
     <ConfigProvider>
       <div className="mx-auto w-full px-5 lg:w-3/4 lg:px-0 2xl:w-1/2">

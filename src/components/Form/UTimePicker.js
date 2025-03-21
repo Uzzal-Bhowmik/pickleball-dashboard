@@ -6,7 +6,7 @@ export default function UTimePicker({
   label,
   name,
   use12Hours = true,
-  format = "HH:mm a",
+  format = "hh:mm a",
   placeholder,
   style = {},
   className,

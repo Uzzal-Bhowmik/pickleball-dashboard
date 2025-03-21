@@ -57,7 +57,7 @@ export default function EditSessionModal({ open, setOpen, session }) {
 
     catchAsync(async () => {
       await editSession({ id: session?._id, data: formdata }).unwrap();
-      toast.success("Session Updated Successfully");
+      // toast.success("Session Updated Successfully");
       setOpen(false);
     });
   };

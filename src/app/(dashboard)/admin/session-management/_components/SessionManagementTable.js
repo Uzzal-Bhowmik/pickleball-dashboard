@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Flex, Input, Image, Tooltip } from "antd";
+import { Button, Flex, Input, Tooltip } from "antd";
 import { Table } from "antd";
 import { PlusCircle } from "lucide-react";
 import { Icon } from "@iconify/react";
@@ -69,7 +69,7 @@ export default function SessionManagementTable() {
   const handleDeleteSession = async (sessionId) => {
     await catchAsync(async () => {
       await deleteSession(sessionId).unwrap();
-      toast.success("Session Deleted Successfully");
+      // toast.success("Session Deleted Successfully");
     });
   };
 

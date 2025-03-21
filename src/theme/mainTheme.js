@@ -51,9 +51,7 @@ export const mainTheme = {
     },
 
     DatePicker: {
-      colorBgContainer: "var(--primary)",
-      colorPrimary: "var(--primary)",
-      colorTextPlaceholder: "#ffffff",
+      colorBorder: "#a2a2a3",
     },
   },
 };

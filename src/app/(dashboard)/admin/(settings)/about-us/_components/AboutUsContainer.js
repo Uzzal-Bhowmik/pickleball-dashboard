@@ -17,8 +17,6 @@ export default function AboutUsContainer() {
   const { data, isLoading: isLoadingData } = useGetSettingsDataQuery();
   const aboutUs = data?.data?.aboutUs || "";
 
-  console.log({ aboutUs });
-
   const [updateFn, { isLoading }] = useUpdateSettingsDataMutation();
 
   const handleSubmit = (data) => {

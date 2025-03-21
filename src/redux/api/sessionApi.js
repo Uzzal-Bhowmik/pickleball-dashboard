@@ -52,6 +52,16 @@ const sessionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.sessions],
     }),
+
+    // ----------------- Session Time Slots -------------------- //
+    getSessionTimeSlots: builder.query({
+      query: (data) => ({
+        url: `/session-slots/session/${data?.sessionId}`,
+        method: "GET",
+        params: data?.arg,
+      }),
+      providesTags: [tagTypes.sessionTimeSlots],
+    }),
   }),
 
   overrideExisting: true,
@@ -63,4 +73,5 @@ export const {
   useEditSessionMutation,
   useChangeSessionStatusMutation,
   useDeleteSessionMutation,
+  useGetSessionTimeSlotsQuery,
 } = sessionApi;

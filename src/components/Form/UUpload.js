@@ -51,8 +51,6 @@ export default function UUpload({
                 const isValidFileType = file.type.startsWith(fileType);
                 const isValidFileSize = file.size / 1024 / 1024 < fileSize; // default 5 MB
 
-                // console.log(file);
-
                 if (!file.type.startsWith(fileType)) {
                   toast.error(
                     `Invalid file type!! Only ${fileType} files are allowed.`,

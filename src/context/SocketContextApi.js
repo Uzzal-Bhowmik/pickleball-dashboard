@@ -27,7 +27,7 @@ export const SocketProvider = ({ children }) => {
       });
 
       socketStore.on("connect", () => {
-        toast.success("Connected to server"); // Don't remove this line - it's used for socket connection testing
+        // toast.success("Connected to server"); // Don't remove this line - it's used for socket connection testing
         setSocketLoading(false);
       });
 

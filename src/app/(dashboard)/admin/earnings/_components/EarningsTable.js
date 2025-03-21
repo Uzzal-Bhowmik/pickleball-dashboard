@@ -35,8 +35,6 @@ export default function EarningsTable() {
   const earningsData = earningsRes?.data || [];
   const earningsMeta = earningsRes?.meta || {};
 
-  console.log(earningsData);
-
   // =============== Table columns ===============
   const columns = [
     {

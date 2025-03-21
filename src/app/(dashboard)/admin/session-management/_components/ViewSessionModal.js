@@ -3,11 +3,17 @@
 import CustomAvatar from "@/components/CustomAvatar";
 import { Modal } from "antd";
 import { Image } from "antd";
-import NextImage from "next/image";
-import placeholderImage from "../../../../../../public/placeholder-image.jpg";
+import placeholderImage from "@/assets/images/placeholder-image.webp";
 import dayjs from "dayjs";
+import { useGetSessionTimeSlotsQuery } from "@/redux/api/sessionApi";
 
 export default function ViewSessionModal({ open, setOpen, session }) {
+  // Get session time slots by session id
+  const { data: sessionTimeSlotsRes } = useGetSessionTimeSlotsQuery(
+    { sessionId: session?._id, arg: { limit: 999999 } },
+    { skip: !session?._id },
+  );
+
   return (
     <Modal
       open={open}
@@ -17,7 +23,7 @@ export default function ViewSessionModal({ open, setOpen, session }) {
       onCancel={() => setOpen(false)}
       width={"45%"}
     >
-      <div className="flex gap-6 p-6">
+      <div className="view-session-modal flex gap-6 p-6">
         {/* Left Section */}
         <div className="w-2/3">
           <h2 className="mb-4 text-xl font-semibold">Session Details</h2>
@@ -45,21 +51,6 @@ export default function ViewSessionModal({ open, setOpen, session }) {
 
           {/* Description */}
           <p className="mt-2 text-gray-700">{session?.description}</p>
-
-          {/* Time */}
-          <div className="mt-4">
-            <p className="font-bold">Time</p>
-            <p className="text-gray-700">
-              {dayjs(session?.start_time).format("HH:mm")} -{" "}
-              {dayjs(session?.end_time).format("HH:mm")}
-            </p>
-          </div>
-
-          {/* Duration */}
-          <div className="mt-4">
-            <p className="font-bold">Duration</p>
-            <p className="text-gray-700">{session?.duration} minutes</p>
-          </div>
 
           {/* Location */}
           <div className="mt-4">
@@ -111,6 +102,43 @@ export default function ViewSessionModal({ open, setOpen, session }) {
                 <p className="font-bold">Maximum Waitlist Spots</p>
                 <p className="text-gray-700">{session?.max_waitlist}</p>
               </>
+            )}
+
+            {/* Duration */}
+            <div className="mt-4">
+              <p className="font-bold">Duration</p>
+              <p className="text-gray-700">{session?.duration} minutes</p>
+            </div>
+
+            {/* Start Date */}
+            <div className="mt-4">
+              <p className="font-bold">Start Date</p>
+              <p className="text-gray-700">
+                {dayjs(session?.startDate).format("MMM DD, YYYY")}
+              </p>
+            </div>
+
+            {/* Session Time Slots */}
+            {sessionTimeSlotsRes?.data?.length > 0 && (
+              <div className="mt-4">
+                <p className="font-bold">
+                  Time Slots ({sessionTimeSlotsRes?.data?.length})
+                </p>
+                <table className="mt-2">
+                  <thead>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                  </thead>
+                  <tbody>
+                    {sessionTimeSlotsRes?.data?.map((timeSlot, idx) => (
+                      <tr key={timeSlot._id}>
+                        <td>{timeSlot?.startTime}</td>
+                        <td>{timeSlot?.endTime}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

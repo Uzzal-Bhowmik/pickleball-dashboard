@@ -6,6 +6,7 @@ export const tagTypes = {
   earnings: "Earnings",
   trainers: "Trainers",
   sessions: "Sessions",
+  sessionTimeSlots: "SessionTimeSlots",
   waitList: "WaitList",
   package: "Package",
   Subscription: "Subscription",

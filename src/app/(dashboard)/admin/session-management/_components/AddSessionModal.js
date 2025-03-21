@@ -1,33 +1,49 @@
 "use client";
 
 import FormWrapper from "@/components/Form/FormWrapper";
+import UDatePicker from "@/components/Form/UDatePicker";
 import UInput from "@/components/Form/UInput";
 import USelect from "@/components/Form/USelect";
-import USwitch from "@/components/Form/USwitch";
 import UTextArea from "@/components/Form/UTextArea";
 import UTimePicker from "@/components/Form/UTimePicker";
 import UUpload from "@/components/Form/UUpload";
 import { useCreateSessionMutation } from "@/redux/api/sessionApi";
 import { useGetAllTrainersQuery } from "@/redux/api/trainerApi";
 import catchAsync from "@/utils/catchAsync";
-import { formatTime } from "@/utils/formatTime";
-import { Switch } from "antd";
-import { Col, Flex, Row } from "antd";
+import { Row, Switch } from "antd";
+import { Divider } from "antd";
+import { Space } from "antd";
+import { Col, Flex } from "antd";
 import { Button, Modal } from "antd";
 import dayjs from "dayjs";
+import { Trash2 } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AddSessionModal({ open, setOpen }) {
   const [enableWaitlist, setEnableWaitlist] = useState(false);
+  const [timeSlots, setTimeSlots] = useState([{ key: 1 }]);
 
   // Get all trainer/coach
   const { data: trainerRes } = useGetAllTrainersQuery();
+
+  // Function to add more time slot fields
+  const addTimeSlotField = () => {
+    const newField = { key: timeSlots.length + 1 };
+    setTimeSlots([...timeSlots, newField]);
+  };
+
+  const removeTimeSlotField = (key) => {
+    const restFields = timeSlots.filter((field) => field.key !== key);
+    setTimeSlots(restFields);
+  };
 
   // Create session
   const [createSession, { isLoading: isCreatingSession }] =
     useCreateSessionMutation();
 
+  // Handle submit
   const onSubmit = (data) => {
     const image = data?.image?.length > 0 ? data?.image[0] : null;
 
@@ -38,34 +54,33 @@ export default function AddSessionModal({ open, setOpen }) {
       formData.append("image", image.originFileObj);
     }
 
-    // Format times
-    const formattedStartTime = formatTime.dateTimeObjToString(
-      data?.start_time,
-      "HH:mm",
-    );
-    const formattedEndTime = formatTime.dateTimeObjToString(
-      data?.end_time,
-      "HH:mm",
-    );
+    // Format time slots
+    const formattedTimeSlots = timeSlots?.map((timeSlot) => {
+      const timeSlotData = {
+        startTime: dayjs(data[`startTime_${timeSlot.key}`]).format("hh:mm A"),
+        endTime: dayjs(data[`endTime_${timeSlot.key}`]).format("hh:mm A"),
+      };
+
+      delete data[`startTime_${timeSlot.key}`];
+      delete data[`endTime_${timeSlot.key}`];
+
+      return timeSlotData;
+    });
 
     delete data["image"];
-    delete data["start_time"];
-    delete data["end_time"];
 
     formData.append(
       "data",
       JSON.stringify({
         ...data,
-        start_time: formattedStartTime,
-        end_time: formattedEndTime,
+        startDate: dayjs(data?.startDate).format("YYYY-MM-DD"),
+        slots: formattedTimeSlots,
         enable_waitlist: enableWaitlist,
       }),
     );
 
     catchAsync(async () => {
       await createSession(formData).unwrap();
-
-      toast.success("Session created successfully");
       setOpen(false);
     });
   };
@@ -87,7 +102,7 @@ export default function AddSessionModal({ open, setOpen }) {
         />
 
         <div className="grid grid-cols-2 gap-x-8">
-          <UInput name="name" label="Session Title" required />
+          <UInput name="name" label="Session Title" required={true} />
 
           <USelect
             name="skill_level"
@@ -128,35 +143,6 @@ export default function AddSessionModal({ open, setOpen }) {
             required
           />
 
-          <Row gutter={20}>
-            <Col span={12}>
-              <UTimePicker
-                name="start_time"
-                label="Start Time"
-                format="HH:mm"
-                use12Hours={false}
-                required
-              />
-            </Col>
-
-            <Col span={12}>
-              <UTimePicker
-                name="end_time"
-                label="End Time"
-                format="HH:mm"
-                use12Hours={false}
-                required
-              />
-            </Col>
-          </Row>
-
-          <UInput
-            type="number"
-            name="duration"
-            label="Duration (in minutes!)"
-            required
-          />
-
           <UInput
             type="number"
             name="price"
@@ -192,6 +178,58 @@ export default function AddSessionModal({ open, setOpen }) {
             disabled={!enableWaitlist}
             required={false}
           />
+        </div>
+
+        <Divider variant="dashed">Session Time Management</Divider>
+
+        <div className="mb-10 grid grid-cols-2 gap-x-8">
+          <UDatePicker
+            name="startDate"
+            label="Start Date"
+            placeholder=""
+            required={true}
+            disabled={(current) => current && current < dayjs().startOf("day")}
+          />
+          <UInput name="duration" label="Duration (in days)" required={true} />
+
+          {timeSlots.map((field, index) => (
+            <Row key={field.key} align="middle" gutter={16}>
+              <Col span={11}>
+                <UTimePicker
+                  label={`Start Time ${index + 1}`}
+                  name={`startTime_${index + 1}`}
+                />
+              </Col>
+
+              <Col span={11}>
+                <UTimePicker
+                  label={`End Time ${index + 1}`}
+                  name={`endTime_${index + 1}`}
+                />
+              </Col>
+
+              {index > 0 && (
+                <Col span={2}>
+                  <Button
+                    icon={<Trash2 size={20} />}
+                    color="danger"
+                    onClick={() => removeTimeSlotField(field.key)}
+                  />
+                </Col>
+              )}
+            </Row>
+          ))}
+          <Space>
+            <Button
+              type="dashed"
+              size="large"
+              onClick={addTimeSlotField}
+              icon={<PlusCircle size={20} />}
+              className=""
+            >
+              Add Time Slot
+            </Button>
+          </Space>
         </div>
 
         <Button

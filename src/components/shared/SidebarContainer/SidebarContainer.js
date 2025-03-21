@@ -78,8 +78,6 @@ const SidebarContainer = () => {
 
       toast.success("Successfully Logged Out!");
     }
-
-    console.log("logout success");
   };
 
   // Sidebar Links

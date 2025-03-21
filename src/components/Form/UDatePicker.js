@@ -5,17 +5,25 @@ import { Controller } from "react-hook-form";
 const UDatePicker = ({
   name,
   label,
-  size,
+  size = "large",
   placeholder,
   labelStyles = {},
   format,
   showTime = false,
   picker,
   style,
+  required,
+  disabled,
 }) => {
   return (
     <Controller
       name={name}
+      rules={{
+        required: {
+          value: required,
+          message: label || "This field" + " is required",
+        },
+      }}
       render={({ field, fieldState: { error } }) => (
         <Form.Item
           label={
@@ -27,6 +35,7 @@ const UDatePicker = ({
           }
           validateStatus={error ? "error" : ""}
           help={error ? error.message : ""}
+          required={required}
         >
           <DatePicker
             {...field}
@@ -40,7 +49,8 @@ const UDatePicker = ({
               field.onChange(date ? dayjs(date).format(format) : null);
             }}
             value={field.value ? dayjs(field.value) : null}
-            style={style ? style : { height: "35px", width: "100%" }}
+            style={style ? style : { height: "38px", width: "100%" }}
+            disabledDate={disabled}
           />
         </Form.Item>
       )}

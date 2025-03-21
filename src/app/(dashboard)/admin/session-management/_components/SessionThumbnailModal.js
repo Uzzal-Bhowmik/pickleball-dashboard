@@ -3,7 +3,6 @@ import { Image } from "antd";
 import { Modal } from "antd";
 
 export default function SessionThumbnailModal({ open, setOpen, thumbnail }) {
-  console.log(thumbnail);
   return (
     <Modal
       open={open}
