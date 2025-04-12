@@ -1,10 +1,6 @@
 "use client";
-import { Icon } from "@iconify/react";
-import { Flex } from "antd";
 import { DatePicker } from "antd";
-import { Select } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
 import {
   AreaChart,
   Area,
@@ -25,7 +21,7 @@ const EarningChart = ({ data, setSelectedEarningYear }) => {
           onChange={(_, dateString) => setSelectedEarningYear(dateString)}
           picker="year"
           defaultValue={dayjs()}
-          className="!border-none !py-1.5 !text-white"
+          className="!py-1.5"
         />
       </div>
 

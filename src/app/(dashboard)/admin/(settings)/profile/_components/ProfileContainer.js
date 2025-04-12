@@ -9,7 +9,7 @@ import EditProfileForm from "./EditProfileForm";
 import { Tabs } from "antd";
 import { useGetProfileQuery } from "@/redux/api/authApi";
 import { useSelector } from "react-redux";
-import placeholderImage from "../../../../../../../public/placeholder-image.jpg";
+import placeholderImage from "@/assets/images/placeholder-image.webp";
 import ChangeProfilePicModal from "./ChangeProfilePicModal";
 import { useState } from "react";
 
@@ -46,11 +46,11 @@ export default function ProfileContainer() {
                 height={150}
                 width={150}
                 className="aspect-square h-auto w-[160px] rounded-full border-2 border-primary object-cover object-center p-1"
-                fallback={"/placeholder-image.jpg"}
+                fallback={"/placeholder-image.webp"}
               />
             ) : (
               <Image
-                src={placeholderImage?.src}
+                src={adminImg}
                 alt="Admin avatar"
                 height={150}
                 width={150}

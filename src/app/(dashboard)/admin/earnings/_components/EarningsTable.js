@@ -23,11 +23,16 @@ export default function EarningsTable() {
   const currentPathname = usePathname();
   const { createQueryString } = useQueryString();
   const [searchText, setSearchText] = useState("");
+  const [filterDate, setFilterDate] = useState("");
 
   // Query params
   const query = {};
   if (searchText) {
-    query["id"] = searchText;
+    query["searchTerm"] = searchText;
+  }
+
+  if (filterDate) {
+    query["date"] = filterDate;
   }
 
   // Get all earnings
@@ -47,7 +52,7 @@ export default function EarningsTable() {
       render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <CustomAvatar src={value?.photoUrl} name={value?.name} size={30} />
+            <CustomAvatar src={value?.photoUrl} name={value?.name} size={35} />
             <p>{value?.name}</p>
           </Flex>
         );
@@ -189,6 +194,7 @@ export default function EarningsTable() {
               picker="month"
               placeholder="Filter Month"
               style={{ height: "65%" }}
+              onChange={(_, dateString) => setFilterDate(dateString)}
             />
           </Flex>
         </Col>

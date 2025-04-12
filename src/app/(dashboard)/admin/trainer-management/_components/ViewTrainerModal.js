@@ -4,6 +4,7 @@ import CustomAvatar from "@/components/CustomAvatar";
 import { Flex } from "antd";
 
 export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
+  console.log({ selectedTrainer });
   return (
     <Modal
       centered
@@ -15,11 +16,11 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
     >
       <div className="mb-6 flex flex-col items-start space-y-3">
         <CustomAvatar
-          src={selectedTrainer?.user?.photoUrl}
-          name={selectedTrainer?.user?.name}
+          src={selectedTrainer?.photoUrl}
+          name={selectedTrainer?.name}
           size={150}
         />
-        <h1 className="text-2xl font-bold">{selectedTrainer?.user?.name}</h1>
+        <h1 className="text-2xl font-bold">{selectedTrainer?.name}</h1>
       </div>
 
       <div className="mb-8 grid gap-6 md:grid-cols-2">
@@ -27,7 +28,7 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
           <label className="text-muted-foreground text-sm font-bold">
             Email Address
           </label>
-          <p className="font-medium">{selectedTrainer?.user?.email}</p>
+          <p className="font-medium">{selectedTrainer?.email}</p>
         </div>
         <div className="space-y-2">
           <label className="text-muted-foreground text-sm font-bold">
@@ -57,35 +58,20 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
           <p className="font-medium">${selectedTrainer?.per_hour_rate}/hour</p>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-muted-foreground text-sm font-bold">
-            Availability
-          </label>
-          <Flex align="center" justify="start" gap={5} wrap>
-            {selectedTrainer?.availability?.map((day) => (
-              <Tag key={day} color="green" className="capitalize">
-                {day}
-              </Tag>
-            ))}
-          </Flex>
-        </div>
-
-        <div>
-          <label className="text-muted-foreground text-sm font-bold">
-            Time Slot
-          </label>
-          <p className="font-medium">
-            {selectedTrainer?.start_time} - {selectedTrainer?.end_time}
-          </p>
-        </div>
-
         <div>
           <label className="text-muted-foreground text-sm font-bold">
             Contact Number
           </label>
           <p className="font-medium">
-            {selectedTrainer?.user?.contactNumber || "--"}
+            {selectedTrainer?.contactNumber || "--"}
           </p>
+        </div>
+
+        <div>
+          <label className="text-muted-foreground text-sm font-bold">
+            Location
+          </label>
+          <p className="font-medium">{selectedTrainer?.location || "--"}</p>
         </div>
       </div>
 
@@ -115,37 +101,6 @@ export default function ViewTrainerModal({ open, setOpen, selectedTrainer }) {
           <label className="text-muted-foreground text-sm font-bold">
             Achievements
           </label>
-          {/* <ul className="text-muted-foreground space-y-2 text-sm">
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Certified IPTPA Level II Coach – Recognized for excellence in
-              player development
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Coached 100+ Players to Tournament Wins – Including state and
-              national titles
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Former Professional Player – Competed in League/Tournament at an
-              elite level
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Featured Speaker at Pickleball Summits – Conducted training
-              workshops and strategy sessions
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Top-Ranked Doubles Player – Dominated competitive circuits
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 text-primary">•</span>
-              Developed Training Programs for Elite Players – Customized drills
-              and performance-based coaching
-            </li>
-          </ul> */}
 
           <p>{selectedTrainer?.achievement}</p>
         </div>

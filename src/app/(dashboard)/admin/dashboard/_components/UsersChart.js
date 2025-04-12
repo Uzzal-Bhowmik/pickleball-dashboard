@@ -19,16 +19,14 @@ const UsersChart = ({ data, setSelectedUserYear }) => {
       <div className="mb-10 flex items-center justify-between gap-2 lg:flex-wrap xl:flex-nowrap">
         <h1 className="text-xl font-bold">Users Overview</h1>
 
-        <div className="space-x-3">
-          <DatePicker
-            onChange={(_, dateString) => {
-              setSelectedUserYear(dateString);
-            }}
-            picker="year"
-            defaultValue={dayjs()}
-            className="!border-none !py-1.5 !text-white"
-          />
-        </div>
+        <DatePicker
+          onChange={(_, dateString) => {
+            setSelectedUserYear(dateString);
+          }}
+          picker="year"
+          defaultValue={dayjs()}
+          className="!py-1.5"
+        />
       </div>
 
       <ResponsiveContainer width="100%" height={300}>

@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { setUser } from "@/redux/features/authSlice";
+import { getAdminLoginInfo, getNodeEnv } from "@/config";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -60,8 +61,10 @@ export default function LoginForm() {
         onSubmit={onLoginSubmit}
         resolver={zodResolver(loginSchema)}
         defaultValues={{
-          email: "pikleballadmin@gmail.com",
-          password: "admin123",
+          email:
+            getNodeEnv() === "development" ? getAdminLoginInfo().email : "",
+          password:
+            getNodeEnv() === "development" ? getAdminLoginInfo().password : "",
         }}
       >
         <UInput

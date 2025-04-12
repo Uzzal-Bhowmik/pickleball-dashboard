@@ -1,6 +1,5 @@
 "use client";
 
-import { ConfigProvider } from "antd";
 import { Table } from "antd";
 import { Tooltip } from "antd";
 import { Tag } from "antd";
@@ -25,9 +24,17 @@ const AccDetailsTable = () => {
   const { createQueryString } = useQueryString();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState({});
+  const [searchText, setSearchText] = useState("");
+
+  // Query params
+  const query = {};
+  if (searchText) {
+    query["searchTerm"] = searchText;
+  }
 
   // Get Recent Users
-  const { data: users, isLoading: isGetAllUsersLoading } = useGetAllUserQuery();
+  const { data: users, isLoading: isGetAllUsersLoading } =
+    useGetAllUserQuery(query);
 
   // Block User
   const [blockUser] = useUpdateUserMutation();

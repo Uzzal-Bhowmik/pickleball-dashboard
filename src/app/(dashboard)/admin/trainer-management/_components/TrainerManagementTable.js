@@ -43,6 +43,8 @@ export default function TrainerManagementTable() {
   const trainers = trainersRes?.data || [];
   const trainersMeta = trainersRes?.meta || {};
 
+  console.log({ trainers });
+
   // Delete Trainer
   const [deleteTrainer] = useDeleteTrainerMutation();
   const handleDeleteTrainer = async (trainerId) => {
@@ -61,11 +63,10 @@ export default function TrainerManagementTable() {
 
     {
       title: "Name",
-      dataIndex: "user",
       render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <CustomAvatar name={value?.name} src={value?.photoUrl} size={30} />
+            <CustomAvatar name={value?.name} src={value?.photoUrl} size={35} />
             <p>{value?.name}</p>
           </Flex>
         );
@@ -74,8 +75,7 @@ export default function TrainerManagementTable() {
 
     {
       title: "Email",
-      dataIndex: "user",
-      render: (value) => value?.email,
+      dataIndex: "email",
     },
     {
       title: "Per Hour Rate",
@@ -87,31 +87,10 @@ export default function TrainerManagementTable() {
       dataIndex: "avgRating",
       render: (value) => (
         <Flex align="center" justify="start" gap={3}>
-          {value.toFixed(1)}
+          {value}
           <Icon icon="tdesign:star" width="22" height="22" color="#fccb29" />
         </Flex>
       ),
-    },
-    {
-      title: "Availability",
-      dataIndex: "availability",
-      render: (value) => {
-        return (
-          <Flex
-            align="center"
-            justify="start"
-            wrap="wrap"
-            gap={10}
-            style={{ maxWidth: "300px" }}
-          >
-            {value?.map((item) => (
-              <Tag key={item} color="green" className="capitalize">
-                {item}
-              </Tag>
-            ))}
-          </Flex>
-        );
-      },
     },
     {
       title: "Action",
@@ -162,7 +141,7 @@ export default function TrainerManagementTable() {
               description="This trainer will be permanently deleted."
               onConfirm={() => handleDeleteTrainer(record?._id)}
             >
-              <Tooltip title="Cancel Trainer">
+              <Tooltip title="Delete Trainer">
                 <Button
                   type="outline"
                   icon={
