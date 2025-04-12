@@ -99,6 +99,7 @@ export default function AddSessionModal({ open, setOpen }) {
           label="Upload Thumbnail Field"
           uploadTitle="thumbnail"
           fileType="image"
+          required={false}
         />
 
         <div className="grid grid-cols-2 gap-x-8">
@@ -130,7 +131,7 @@ export default function AddSessionModal({ open, setOpen }) {
             name="coach"
             label="Select Coach"
             options={trainerRes?.data?.map((trainer) => ({
-              label: trainer?.user?.name,
+              label: trainer?.name,
               value: trainer?._id,
             }))}
             required
@@ -145,13 +146,13 @@ export default function AddSessionModal({ open, setOpen }) {
 
           <UInput
             type="number"
-            name="price"
-            label="Price"
-            prefix={"$"}
+            name="credit"
+            label="Required Credits"
             required
           />
 
           <UInput name="location" label="Location" required />
+
           <UInput
             name="locationLink"
             label="Location Link (Optional)"
@@ -190,7 +191,7 @@ export default function AddSessionModal({ open, setOpen }) {
             required={true}
             disabled={(current) => current && current < dayjs().startOf("day")}
           />
-          <UInput name="duration" label="Duration (in days)" required={true} />
+          <UInput name="duration" label="Duration (minutes)" required={true} />
 
           {timeSlots.map((field, index) => (
             <Row key={field.key} align="middle" gutter={16}>

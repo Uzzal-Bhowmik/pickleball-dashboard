@@ -115,6 +115,9 @@ export default function SessionManagementTable() {
     {
       title: "Location",
       dataIndex: "location",
+      render(value) {
+        return <p className="max-w-[200px]">{value}</p>;
+      },
     },
     {
       title: "Trainer",
@@ -122,21 +125,17 @@ export default function SessionManagementTable() {
       render: (value) => {
         return (
           <Flex align="center" justify="start" gap={8}>
-            <CustomAvatar
-              src={value?.user?.photoUrl}
-              name={value?.user?.name}
-              size={30}
-            />
-            <p>{value?.user?.name}</p>
+            <CustomAvatar src={value?.photoUrl} name={value?.name} size={30} />
+            <p>{value?.name}</p>
           </Flex>
         );
       },
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      render: (value) => {
-        return <span>${value}</span>;
+      title: "Required Credits",
+      dataIndex: "credit",
+      render(value) {
+        return <Tag color="magenta">{value}</Tag>;
       },
     },
     {
@@ -144,18 +143,18 @@ export default function SessionManagementTable() {
       dataIndex: "status",
       render: (value, record) => {
         return (
-          <Flex vertical align="center" gap={10}>
+          <>
             <Tag color={getTagColor(value)} className="capitalize">
               {value}
             </Tag>
-
+            <br />
             <button
               className="rounded-xl border border-slate-400 px-2 text-xs text-slate-600 transition-colors duration-200 ease-in-out hover:border-primary hover:bg-primary hover:text-white"
               onClick={() => handleChangeSessionStatus(record)}
             >
-              Change Status
+              Change
             </button>
-          </Flex>
+          </>
         );
       },
       filters: [

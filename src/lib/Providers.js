@@ -4,7 +4,6 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { ConfigProvider } from "antd";
 import { mainTheme } from "../theme/mainTheme";
 import NextTopLoader from "nextjs-toploader";
-import { Toaster } from "react-hot-toast";
 import MainLayoutContextProvider from "@/context/MainLayoutContext";
 import { useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";

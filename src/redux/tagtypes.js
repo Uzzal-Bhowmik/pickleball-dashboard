@@ -14,6 +14,7 @@ export const tagTypes = {
   reviews: "Reviews",
   meta: "Meta",
   settings: "Settings",
+  creditPackage: "CreditPackages",
 };
 
 export const tagTypesList = Object.values(tagTypes);

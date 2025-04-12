@@ -48,12 +48,13 @@ const adminLinks = [
     route: "/admin/session-management",
     label: "Session Management",
   },
-  // {
-  //   id: "subscriptions",
-  //   icon: "lineicons:crown-3",
-  //   route: "/admin/subscriptions",
-  //   label: "Subscriptions",
-  // },
+
+  {
+    id: "credit-management",
+    icon: "hugeicons:coins-dollar",
+    route: "/admin/credit-management",
+    label: "Credit Management",
+  },
   {
     id: "settings",
     icon: "si:settings-fill",

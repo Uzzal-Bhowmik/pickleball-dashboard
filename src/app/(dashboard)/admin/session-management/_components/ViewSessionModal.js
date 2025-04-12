@@ -75,13 +75,13 @@ export default function ViewSessionModal({ open, setOpen, session }) {
           {/* Coach Info */}
           <div className="mb-4 flex items-center space-x-3">
             <CustomAvatar
-              src={session?.coach?.user?.photoUrl}
-              name={session?.coach?.user?.name}
+              src={session?.coach?.photoUrl}
+              name={session?.coach?.name}
               size={30}
             />
             <div>
               <p className="font-bold">Coach</p>
-              <p className="text-gray-700">{session?.coach?.user?.name}</p>
+              <p className="text-gray-700">{session?.coach?.name}</p>
             </div>
           </div>
 
@@ -93,8 +93,8 @@ export default function ViewSessionModal({ open, setOpen, session }) {
             </div>
 
             <div className="my-4">
-              <p className="font-bold">Price</p>
-              <p className="text-gray-700">${session?.price}</p>
+              <p className="font-bold">Required Credits</p>
+              <p className="text-gray-700">{session?.credit}</p>
             </div>
 
             {session?.enable_waitlist && (

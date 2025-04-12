@@ -36,6 +36,9 @@ export const mainTheme = {
       // colorInfo: "#1B70A6",
       borderColor: "lightGray",
       headerBorderRadius: "0",
+      bodySortBg: "var(--primary)",
+      headerSortActiveBg: "var(--primary)",
+      headerSortHoverBg: "var(--primary)",
     },
 
     Button: {
