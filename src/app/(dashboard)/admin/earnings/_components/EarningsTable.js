@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Col, Flex, Row } from "antd";
+import { Col, Flex, Row } from "antd";
 import { Tag } from "antd";
 import { Table } from "antd";
 import { Filter } from "lucide-react";
@@ -37,8 +37,10 @@ export default function EarningsTable() {
 
   // Get all earnings
   const { data: earningsRes, isLoading } = useGetAllEarningsQuery(query);
-  const earningsData = earningsRes?.data || [];
+  const earningsData = earningsRes?.data || {};
   const earningsMeta = earningsRes?.meta || {};
+
+  console.log({ earningsData });
 
   // =============== Table columns ===============
   const columns = [
@@ -100,25 +102,13 @@ export default function EarningsTable() {
 
     {
       title: "Tnx Id",
-      dataIndex: "transaction_id",
+      dataIndex: "transactionId",
       render: (value) => (
-        <Tag
-          color="magenta"
-          className="!text-sm"
-          onClick={() => setShowFormattedTnxId(!showFormattedTnxId)}
-          role="button"
-        >
-          {showFormattedTnxId ? formatString.formatTransactionId(value) : value}
+        <Tag color="magenta" className="!text-sm" role="button">
+          {value}
         </Tag>
       ),
     },
-    // {
-    //   title: "Subscription Type",
-    //   dataIndex: "subscriptionType",
-    //   render: (value) => {
-    //     return <Tag color={getTagColor(value)}>{value}</Tag>;
-    //   },
-    // },
     {
       title: "Date",
       dataIndex: "createdAt",
@@ -126,13 +116,6 @@ export default function EarningsTable() {
         return dayjs(value).format("MMM D YYYY, h:mm A");
       },
     },
-
-    // {
-    //   title: "Action",
-    //   render: () => {
-    //     return <Button type="primary">View Details</Button>;
-    //   },
-    // },
   ];
 
   return (
@@ -206,16 +189,16 @@ export default function EarningsTable() {
         dataSource={earningsData?.earnings}
         scroll={{ x: "100%" }}
         loading={isLoading}
-        pagination={{
-          total: earningsMeta.total,
-          pageSize: 10,
-          current: useSearchParams().get("page") || 1,
-          onChange: (page, pageSize) => {
-            router.push(
-              currentPathname + "?" + createQueryString({ page, pageSize }),
-            );
-          },
-        }}
+        // pagination={{
+        //   total: earningsMeta?.total,
+        //   pageSize: 10,
+        //   current: useSearchParams().get("page") || 1,
+        //   onChange: (page, pageSize) => {
+        //     router.push(
+        //       currentPathname + "?" + createQueryString({ page, pageSize }),
+        //     );
+        //   },
+        // }}
       ></Table>
     </div>
   );
