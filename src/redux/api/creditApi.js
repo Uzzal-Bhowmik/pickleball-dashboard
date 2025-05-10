@@ -1,7 +1,7 @@
 import { tagTypes } from "../tagtypes";
 import { baseApi } from "./baseApi";
 
-const URL_PREFIX = "/packages";
+const URL_PREFIX = "/credits";
 
 const creditApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

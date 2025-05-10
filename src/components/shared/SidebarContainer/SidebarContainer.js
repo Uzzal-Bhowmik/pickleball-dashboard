@@ -48,12 +48,17 @@ const adminLinks = [
     route: "/admin/session-management",
     label: "Session Management",
   },
-
   {
     id: "credit-management",
     icon: "hugeicons:coins-dollar",
     route: "/admin/credit-management",
     label: "Credit Management",
+  },
+  {
+    id: "subscription-packages",
+    icon: "material-symbols:crown-outline-rounded",
+    route: "/admin/subscription-packages",
+    label: "Subscription Packages",
   },
   {
     id: "settings",

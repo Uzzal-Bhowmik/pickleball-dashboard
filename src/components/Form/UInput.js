@@ -16,6 +16,8 @@ const UInput = ({
   prefix,
   style,
   max,
+  min,
+  minLength,
   required = true,
 }) => {
   return (
@@ -62,6 +64,8 @@ const UInput = ({
               prefix={prefix}
               style={style}
               max={max}
+              min={min}
+              minLength={minLength}
             />
           )}
         </Form.Item>

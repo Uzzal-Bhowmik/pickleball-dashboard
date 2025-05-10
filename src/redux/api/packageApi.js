@@ -3,7 +3,7 @@ import { baseApi } from "./baseApi";
 
 const packageApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    createPackager: builder.mutation({
+    createPackage: builder.mutation({
       query: (data) => ({
         url: "/packages",
         method: "POST",
@@ -18,6 +18,10 @@ const packageApi = baseApi.injectEndpoints({
         url: "/packages",
         method: "GET",
         params: arg,
+      }),
+      transformResponse: (res) => ({
+        data: res?.data,
+        meta: res?.meta,
       }),
 
       providesTags: [tagTypes.package],
@@ -43,7 +47,7 @@ const packageApi = baseApi.injectEndpoints({
     updatePackage: builder.mutation({
       query: ({ id, data }) => ({
         url: `/packages/${id}`,
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
 
@@ -55,7 +59,7 @@ const packageApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useCreatePackagerMutation,
+  useCreatePackageMutation,
   useGetPackagesQuery,
   useGetSinglePackageQuery,
   useDeletePackageMutation,

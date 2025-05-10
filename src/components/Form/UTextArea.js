@@ -18,7 +18,7 @@ export default function UTextArea({
       name={name}
       rules={{
         required: {
-          value: true,
+          value: required,
           message: `${label} is required`,
         },
       }}

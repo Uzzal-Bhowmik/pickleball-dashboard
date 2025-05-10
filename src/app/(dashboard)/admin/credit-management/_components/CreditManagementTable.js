@@ -9,6 +9,7 @@ import {
 import catchAsync from "@/utils/catchAsync";
 import { Table, Tooltip } from "antd";
 import { Button, Flex } from "antd";
+import { clearConfig } from "dompurify";
 import { Trash2 } from "lucide-react";
 import { PlusCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -76,11 +77,11 @@ export default function CreditManagementContainer() {
       render(value) {
         return (
           <CustomConfirm
-            title={"Delete"}
+            title={"DeleteCredit"}
             description={"Are you sure you want to delete it?"}
             onConfirm={() => handleDeleteCreditPackage(value?._id)}
           >
-            <Tooltip title="Delete Reminder">
+            <Tooltip title="Delete Credit">
               <Button
                 size="small"
                 icon={<Trash2 size={16} />}
@@ -93,6 +94,8 @@ export default function CreditManagementContainer() {
       },
     },
   ];
+
+  console.log({ creditPackagesRes });
 
   return (
     <div className="min-h-[85vh] space-y-5 rounded-xl bg-white p-5">
