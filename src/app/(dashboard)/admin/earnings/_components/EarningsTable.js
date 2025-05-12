@@ -40,8 +40,6 @@ export default function EarningsTable() {
   const earningsData = earningsRes?.data || {};
   const earningsMeta = earningsRes?.meta || {};
 
-  console.log({ earningsData });
-
   // =============== Table columns ===============
   const columns = [
     {
@@ -186,19 +184,19 @@ export default function EarningsTable() {
       <Table
         style={{ overflowX: "auto" }}
         columns={columns}
-        dataSource={earningsData?.earnings}
+        dataSource={earningsData?.earningList}
         scroll={{ x: "100%" }}
         loading={isLoading}
-        // pagination={{
-        //   total: earningsMeta?.total,
-        //   pageSize: 10,
-        //   current: useSearchParams().get("page") || 1,
-        //   onChange: (page, pageSize) => {
-        //     router.push(
-        //       currentPathname + "?" + createQueryString({ page, pageSize }),
-        //     );
-        //   },
-        // }}
+        pagination={{
+          total: earningsMeta?.total,
+          pageSize: 10,
+          current: useSearchParams().get("page") || 1,
+          onChange: (page, pageSize) => {
+            router.push(
+              currentPathname + "?" + createQueryString({ page, pageSize }),
+            );
+          },
+        }}
       ></Table>
     </div>
   );
