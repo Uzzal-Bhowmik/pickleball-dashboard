@@ -36,6 +36,17 @@ export default function EditSubscriptionPackageModal({
       description = [`Buy credits at a ${data?.discount}% discounted rate`];
     }
 
+    const discountArr = data?.description.split(",");
+
+    const restDescWithoutDiscount = discountArr?.filter(
+      (_item, idx) => idx !== 0,
+    );
+
+    description = [
+      `Buy credits at a ${data?.discount}% discounted rate`,
+      ...restDescWithoutDiscount,
+    ];
+
     catchAsync(async () => {
       await editPackage({
         id: selectedPackage?._id,

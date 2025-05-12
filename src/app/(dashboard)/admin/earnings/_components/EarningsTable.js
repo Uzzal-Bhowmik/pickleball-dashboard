@@ -64,7 +64,7 @@ export default function EarningsTable() {
       title: "Amount",
       dataIndex: "amount",
       render: (value) => {
-        return "$" + value;
+        return "£" + value;
       },
     },
     {
@@ -147,7 +147,7 @@ export default function EarningsTable() {
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Today&apos;s Earnings</h4>
               <h4 className="text-lg font-bold">
-                $ {earningsData?.todaysEarning}
+                £ {earningsData?.todaysEarning}
               </h4>
             </Flex>
           </Flex>
@@ -165,7 +165,7 @@ export default function EarningsTable() {
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Total Earnings</h4>
               <h4 className="text-lg font-bold">
-                $ {earningsData?.totalEarning}
+                £ {earningsData?.totalEarning}
               </h4>
             </Flex>
           </Flex>

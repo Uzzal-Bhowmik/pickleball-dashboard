@@ -67,7 +67,7 @@ export default function CreditManagementContainer() {
       title: "Price",
       dataIndex: "price",
       render(value) {
-        return `$${value}`;
+        return `£${value}`;
       },
       sorter: (a, b) => a.price - b.price,
     },

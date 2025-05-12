@@ -128,7 +128,7 @@ export default function EditTrainerModal({ open, setOpen, trainer }) {
             type="number"
             name="per_hour_rate"
             label="Per Hour Rate"
-            prefix={"$"}
+            prefix={"£"}
             required
           />
 

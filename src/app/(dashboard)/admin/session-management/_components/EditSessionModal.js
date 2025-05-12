@@ -181,7 +181,7 @@ export default function EditSessionModal({ open, setOpen, session }) {
             type="number"
             name="price"
             label="Price"
-            prefix={"$"}
+            prefix={"£"}
             required
           />
 

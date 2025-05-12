@@ -86,7 +86,7 @@ export default function DashboardContainer() {
               </p>
 
               <h2 className="!mt-1 text-3xl font-bold">
-                {stat.key === "revenue" && "$"}
+                {stat.key === "revenue" && "£"}
                 <CustomCountUp start={0} end={stat?.value} />
               </h2>
 

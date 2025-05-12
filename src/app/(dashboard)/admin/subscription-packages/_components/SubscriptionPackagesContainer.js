@@ -51,6 +51,7 @@ export default function SubscriptionPackagesContainer() {
     );
   }
 
+  console.log({ packages });
   return (
     <div>
       <Flex
@@ -61,7 +62,7 @@ export default function SubscriptionPackagesContainer() {
       >
         <h4 className="flex-1 text-2xl font-semibold">Manage Packages</h4>
 
-        <Button
+        {/* <Button
           type="primary"
           icon={<PlusCircle />}
           shape="round"
@@ -70,7 +71,7 @@ export default function SubscriptionPackagesContainer() {
           onClick={() => setShowAddPackageModal(true)}
         >
           Add Package
-        </Button>
+        </Button> */}
       </Flex>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -86,7 +87,7 @@ export default function SubscriptionPackagesContainer() {
 
               <div className="px-6 pt-6">
                 <div className="mb-6 text-center text-3xl font-bold text-gray-800">
-                  ${pkg?.price}/{pkg?.billingCycle}
+                  £{pkg?.price}/{pkg?.billingCycle}
                 </div>
 
                 <ul className="space-y-2 text-gray-600">

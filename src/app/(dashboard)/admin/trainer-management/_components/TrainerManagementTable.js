@@ -3,7 +3,6 @@
 import { Button, Flex, Input, Image, Tooltip } from "antd";
 import { Table } from "antd";
 import { PlusCircle } from "lucide-react";
-import trainerImage from "@/assets/images/session/user.png";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
@@ -15,7 +14,6 @@ import {
   useGetAllTrainersQuery,
 } from "@/redux/api/trainerApi";
 import CustomAvatar from "@/components/CustomAvatar";
-import { Tag } from "antd";
 import catchAsync from "@/utils/catchAsync";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useQueryString from "@/hooks/useQueryString";
@@ -80,7 +78,7 @@ export default function TrainerManagementTable() {
     {
       title: "Per Hour Rate",
       dataIndex: "per_hour_rate",
-      render: (value) => `$${value}`,
+      render: (value) => `£${value}`,
     },
     {
       title: "Avg. Rating",
