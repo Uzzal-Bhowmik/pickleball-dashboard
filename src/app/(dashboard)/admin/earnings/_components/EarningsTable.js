@@ -7,8 +7,6 @@ import { Filter } from "lucide-react";
 import { Input } from "antd";
 import { Icon } from "@iconify/react";
 import { DatePicker } from "antd";
-const { Search } = Input;
-import { formatString } from "@/utils/formatString";
 import { useState } from "react";
 import getTagColor from "@/utils/getTagColor";
 import { useGetAllEarningsQuery } from "@/redux/api/earningsApi";
@@ -16,14 +14,16 @@ import CustomAvatar from "@/components/CustomAvatar";
 import dayjs from "dayjs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import useQueryString from "@/hooks/useQueryString";
+const { Search } = Input;
 
 export default function EarningsTable() {
-  const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
   const router = useRouter();
   const currentPathname = usePathname();
   const { createQueryString } = useQueryString();
   const [searchText, setSearchText] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const page = useSearchParams().get("page") || 1;
+  const limit = useSearchParams().get("pageSize") || 10;
 
   // Query params
   const query = {};
@@ -33,6 +33,14 @@ export default function EarningsTable() {
 
   if (filterDate) {
     query["date"] = filterDate;
+  }
+
+  if (page) {
+    query["page"] = page;
+  }
+
+  if (limit) {
+    query["limit"] = limit;
   }
 
   // Get all earnings

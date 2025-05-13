@@ -51,7 +51,6 @@ export default function SubscriptionPackagesContainer() {
     );
   }
 
-  console.log({ packages });
   return (
     <div>
       <Flex
@@ -108,7 +107,7 @@ export default function SubscriptionPackagesContainer() {
 
             <div className="p-5">
               <Flex justify="between" align="center" gap={10}>
-                <CustomConfirm
+                {/* <CustomConfirm
                   title={"Delete Package"}
                   description="Are you sure you want to delete this package?"
                   onConfirm={() => handleDeletePackage(pkg?._id)}
@@ -116,7 +115,7 @@ export default function SubscriptionPackagesContainer() {
                   <Button color="danger" variant="outlined" className="w-full">
                     Delete
                   </Button>
-                </CustomConfirm>
+                </CustomConfirm> */}
 
                 <Button
                   type="primary"
