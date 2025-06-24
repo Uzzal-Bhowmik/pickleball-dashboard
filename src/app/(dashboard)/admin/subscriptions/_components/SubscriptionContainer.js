@@ -4,7 +4,7 @@ import { Button, Flex } from "antd";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import AddSubscriptionModal from "./AddSubscriptionModal";
-import EditSubscriptionModal from "./EditSubscriptionModal";
+// import EditSubscriptionModal from "./EditSubscriptionModal";
 import SubscriptionCard from "./SubscriptionCard";
 
 // Static Data
@@ -36,8 +36,8 @@ const SUBSCRIPTIONS = [
 export default function SubscriptionContainer() {
   const [showAddSubscriptionModal, setShowAddSubscriptionModal] =
     useState(false);
-  const [showEditSubscriptionModal, setShowEditSubscriptionModal] =
-    useState(false);
+  // const [showEditSubscriptionModal, setShowEditSubscriptionModal] =
+  //   useState(false);
 
   return (
     <div>
@@ -70,6 +70,7 @@ export default function SubscriptionContainer() {
         open={showAddSubscriptionModal}
         setOpen={setShowAddSubscriptionModal}
       />
+      
       {/* <EditSubscriptionModal
         open={showEditSubscriptionModal}
         setOpen={setShowEditSubscriptionModal}

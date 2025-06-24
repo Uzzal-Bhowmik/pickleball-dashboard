@@ -7,7 +7,7 @@ const notificationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMyNotification: builder.query({
       query: (query) => ({
-        url: URL_PREFIX,
+        url: URL_PREFIX + "/my-notification",
         method: "GET",
         params: query,
       }),
